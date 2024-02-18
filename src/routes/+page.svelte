@@ -2,6 +2,7 @@
     import type { Upload } from '$lib/types/uploadTypes';
     import ItemList from '$lib/components/ItemList.svelte';
     import { getPresignedUrl } from './uploadHelper';
+    import axios from 'axios';
 
     let items: Upload[] = [
         { title: 'upload item', url: '222222' },
@@ -20,16 +21,26 @@
 
         const { url } = await getPresignedUrl(file.name, file.type);
 
-        const res = await fetch(url, {
-            method: 'PUT',
+        // const res = await fetch(url, {
+        //     method: 'PUT',
+        //     headers: {
+        //         'Content-Length': file.size.toString(),
+        //         'Content-Type': file.type
+        //     },
+        //     body: await file.arrayBuffer()
+        // });
+
+        const res = await axios.put(url, await file.arrayBuffer(), {
+            url,
             headers: {
-                'Content-Length': file.size.toString(),
                 'Content-Type': file.type
             },
-            body: await file.arrayBuffer()
+            onUploadProgress: (progressEvent) => {
+                console.log(progressEvent.loaded);
+            }
         });
 
-        console.log(await res.text());
+        console.log(res.data);
     };
 </script>
 
