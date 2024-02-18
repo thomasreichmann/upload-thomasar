@@ -1,8 +1,7 @@
 <script lang="ts">
     import type { Upload } from '$lib/types/uploadTypes';
     import ItemList from '$lib/components/ItemList.svelte';
-    import { enhance } from '$app/forms';
-    let form: HTMLFormElement;
+    import { getPresignedUrl } from './uploadHelper';
 
     let items: Upload[] = [
         { title: 'upload item', url: '222222' },
@@ -12,20 +11,30 @@
         },
         { title: 'upload itemupload item', url: '44444444' }
     ];
-    const onSelectFile = (e: Event) => {
+    const onSelectFile = async (e: Event) => {
         const files = (e.target as HTMLInputElement).files;
 
         if (!files || files.length == 0) return;
 
         const file = files[0];
-        form.requestSubmit();
 
-        // Send file data to upload endpoint.
+        const { url } = await getPresignedUrl(file.name, file.type);
+
+        const res = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Length': file.size.toString(),
+                'Content-Type': file.type
+            },
+            body: await file.arrayBuffer()
+        });
+
+        console.log(await res.text());
     };
 </script>
 
 <main>
-    <form method="post" bind:this={form} use:enhance>
+    <form>
         <label id="file-upload-label" for="upload-button">Upload</label>
         <input type="file" name="file" id="upload-button" on:change={onSelectFile} />
     </form>
