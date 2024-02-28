@@ -8,7 +8,7 @@
     const abortController = new AbortController();
 
     const adapter = new FetchUploadAdapter(abortController)
-        .on('error', (error) => {
+        .on('error', (error: any) => {
             console.log(`error uploading`);
 
             if (error instanceof CanceledError) {
@@ -18,6 +18,7 @@
 
             uploadStatus.error = true;
             uploadStatus.uploading = false;
+            uploadStatus.errorMessage = error;
             console.error(error);
         })
         .on('progress', () => {
@@ -25,6 +26,11 @@
         })
         .on('complete', () => {
             console.log(`upload complete`);
+
+            uploadStatus.uploading = false;
+            uploadStatus.uploaded = true;
+
+            console.log(`finished uploading`);
         });
 
     const uploadController = new UploadController(adapter);
@@ -34,7 +40,7 @@
 
         const k = 1024;
         const dm = decimals < 0 ? 0 : decimals;
-        const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+        const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PiB', 'EiB', 'ZiB', 'YiB'];
 
         const i = Math.floor(Math.log(bytes) / Math.log(k));
 
@@ -46,6 +52,7 @@
             uploading: false,
             uploaded: false,
             error: false,
+            errorMessage: '',
             // bytes
             total: 0,
             loaded: 0,
@@ -78,19 +85,12 @@
         uploadStatus.total = file.size;
 
         await uploadController.upload(file);
-
-        uploadStatus.uploading = false;
-        uploadStatus.uploaded = true;
-
-        console.log(`finished uploading`);
     };
 
     const abortUpload = () => {
         console.log(`aborting upload`);
 
         uploadController.abort();
-        uploadStatus.uploading = false;
-        uploadStatus.error = true;
     };
 </script>
 
@@ -107,6 +107,7 @@
         <p>Uploaded!</p>
     {:else if uploadStatus.error}
         <p>Error uploading</p>
+        <pre>{uploadStatus.errorMessage}</pre>
     {/if}
     {#if !uploadStatus.uploading}
         <form>

@@ -5,6 +5,7 @@ type UploadEvent = 'progress' | 'complete' | 'error';
 
 interface UploadAdapter {
     upload(file: File, url: string, method: HttpMethod): Promise<unknown>;
+    abort(): void
 
     on(event: 'progress', handler: (progress: number) => void): void;
     on(event: 'complete', handler: (url: string) => void): void;
@@ -53,22 +54,22 @@ export class BaseUploadAdapter {
 }
 
 export class FetchUploadAdapter extends BaseUploadAdapter implements UploadAdapter {
-    constructor(private abortController?: AbortController) {
+    constructor(private abortController?: AbortController, private shouldUseBlob: boolean = true) {
         super();
     }
 
     public async upload(file: File, url: string, method: string = 'PUT') {
-        const formData = new FormData();
-        formData.append('file', file, file.name);
-
         try {
+            const body = this.shouldUseBlob ? file.stream() : file
+
             const response = await fetch(url, {
                 method,
-                body: formData,
+                body,
                 headers: {
                     'Content-Type': file.type
                 },
-                signal: this.abortController?.signal
+                signal: this.abortController?.signal,
+                // duplex: ''
             });
 
             if (!response.ok) {
@@ -76,11 +77,15 @@ export class FetchUploadAdapter extends BaseUploadAdapter implements UploadAdapt
             }
 
             const data = await response.json();
-            this.emitComplete(data.url);
+            this.emitComplete('changeme');
         } catch (error) {
             // Assuming error is of type Error for proper error message extraction
             this.emitError(error instanceof Error ? error.message : String(error));
         }
+    }
+
+    public abort(): void {
+        this.abortController?.abort()
     }
 }
 
@@ -95,6 +100,10 @@ export class UploadController {
         const url = (await this.getPresignedUrl(file.name, file.type)).url;
 
         return this.uploadAdapter.upload(file, url, 'PUT');
+    }
+
+    public async abort() {
+        this.uploadAdapter.abort()
     }
 
     private async getPresignedUrl(filename: string, contentType: string) {
