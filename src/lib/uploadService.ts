@@ -63,39 +63,31 @@ export class FetchUploadAdapter extends BaseUploadAdapter implements UploadAdapt
 
     public async upload(file: File, url: string, method: string = 'PUT') {
         try {
-            // const body = this.shouldUseBlob
-            //     ? file.stream().pipeThrough(new TextEncoderStream())
-            //     : file;
-            const stream = file.stream();
-
-            const supportsRequestStreams = (() => {
-                let duplexAccessed = false;
-
-                const hasContentType = new Request('', {
-                    body: new ReadableStream() as never,
-                    method: 'PUT',
-                    // @ts-expect-error Duplex is still not properly typed
-                    get duplex() {
-                        duplexAccessed = true;
-                        return 'half';
-                    }
-                }).headers.has('Content-Type');
-
-                return duplexAccessed && !hasContentType;
-            })();
-
-            console.log(supportsRequestStreams);
-
-            const duplex = { duplex: 'half' };
+            // const supportsRequestStreams = (() => {
+            //     let duplexAccessed = false;
+            //
+            //     const hasContentType = new Request('', {
+            //         body: new ReadableStream() as never,
+            //         method: 'PUT',
+            //         // @ts-expect-error Duplex is still not properly typed
+            //         get duplex() {
+            //             duplexAccessed = true;
+            //             return 'half';
+            //         }
+            //     }).headers.has('Content-Type');
+            //
+            //     return duplexAccessed && !hasContentType;
+            // })();
+            //
+            // const duplex = { duplex: 'half' };
 
             const response = await fetch(url, {
                 method,
-                body: stream,
+                body: await file.arrayBuffer(),
                 headers: {
                     'Content-Type': file.type
                 },
-                signal: this.abortController?.signal,
-                ...duplex
+                signal: this.abortController?.signal
             });
 
             console.log(response.type);
