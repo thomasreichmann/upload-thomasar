@@ -1,18 +1,6 @@
 import type { GeneratePresignedUrlResponse } from '$lib/types/uploadTypes';
-import type { HttpMethod } from '@sveltejs/kit';
-
-type UploadEvent = 'progress' | 'complete' | 'error';
-
-interface UploadAdapter {
-    upload(file: File, url: string, method: HttpMethod): Promise<unknown>;
-    abort(): void;
-
-    on(event: 'progress', handler: (progress: number) => void): void;
-    on(event: 'complete', handler: (url: string) => void): void;
-    on(event: 'error', handler: (error: string) => void): void;
-}
-
-type UploadEventHandler<T> = (event: T) => void;
+import type { UploadAdapter, UploadEvent, UploadEventHandler } from '$lib/upload/uploadInterface';
+import { FetchUploadAdapter } from '$lib/upload/adapters/fetchAdapter';
 
 export class BaseUploadAdapter {
     private progressHandlers: UploadEventHandler<number>[] = [];
@@ -50,58 +38,6 @@ export class BaseUploadAdapter {
         }
 
         return this; // For chaining
-    }
-}
-
-export class FetchUploadAdapter extends BaseUploadAdapter implements UploadAdapter {
-    constructor(
-        private abortController?: AbortController,
-        private shouldUseBlob: boolean = true
-    ) {
-        super();
-    }
-
-    public async upload(file: File, url: string, method: string = 'PUT') {
-        try {
-            // const supportsRequestStreams = (() => {
-            //     let duplexAccessed = false;
-            //
-            //     const hasContentType = new Request('', {
-            //         body: new ReadableStream() as never,
-            //         method: 'PUT',
-            //         // @ts-expect-error Duplex is still not properly typed
-            //         get duplex() {
-            //             duplexAccessed = true;
-            //             return 'half';
-            //         }
-            //     }).headers.has('Content-Type');
-            //
-            //     return duplexAccessed && !hasContentType;
-            // })();
-            //
-            // const duplex = { duplex: 'half' };
-
-            const response = await fetch(url, {
-                method,
-                body: await file.arrayBuffer(),
-                headers: {
-                    'Content-Type': file.type
-                },
-                signal: this.abortController?.signal
-            });
-
-            console.log(response.type);
-
-            // const data = await response.json();
-            this.emitComplete('');
-        } catch (error) {
-            // Assuming error is of type Error for proper error message extraction
-            this.emitError(error instanceof Error ? error.message : String(error));
-        }
-    }
-
-    public abort(): void {
-        this.abortController?.abort();
     }
 }
 

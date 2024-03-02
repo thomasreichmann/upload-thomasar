@@ -1,39 +1,28 @@
 <script lang="ts">
     import type { Upload } from '$lib/types/uploadTypes';
     import ItemList from '$lib/components/ItemList.svelte';
-    import { getPresignedUrl } from './uploadHelper';
-    import axios, { CanceledError } from 'axios';
-    import { FetchUploadAdapter, UploadController } from '$lib/uploadService';
+    import { CanceledError } from 'axios';
+    import type { UploadAdapter } from '$lib/upload/uploadInterface';
+    import { FetchUploadAdapter } from '$lib/upload/adapters/fetchAdapter';
+    import { XmlHttpRequestAdapter } from '$lib/upload/adapters/xmlHttpRequestAdapter';
+    import { UploadController } from '$lib/upload/uploadBase';
 
     const abortController = new AbortController();
+    let uploadController: UploadController;
 
-    const adapter = new FetchUploadAdapter(abortController)
-        .on('error', (error: any) => {
-            console.log(`error uploading`);
+    type Adapters = 'fetch' | 'xml';
 
-            if (error instanceof CanceledError) {
-                uploadStatus = getDefaultUploadStatus();
-                return;
-            }
+    let chosenAdapter: Adapters = 'fetch';
 
-            uploadStatus.error = true;
-            uploadStatus.uploading = false;
-            uploadStatus.errorMessage = error;
-            console.error(error);
-        })
-        .on('progress', () => {
-            console.log(`uploading...`);
-        })
-        .on('complete', () => {
-            console.log(`upload complete`);
-
-            uploadStatus.uploading = false;
-            uploadStatus.uploaded = true;
-
-            console.log(`finished uploading`);
-        });
-
-    const uploadController = new UploadController(adapter);
+    const getAdapter = (chosenAdapter: Adapters) => {
+        if (chosenAdapter == 'fetch') {
+            return new FetchUploadAdapter(abortController);
+        } else if (chosenAdapter == 'xml') {
+            return new XmlHttpRequestAdapter();
+        } else {
+            return new FetchUploadAdapter(abortController);
+        }
+    };
 
     const formatBytes = (bytes: number, decimals = 2) => {
         if (!+bytes) return '0 Bytes';
@@ -84,17 +73,52 @@
         uploadStatus.uploading = true;
         uploadStatus.total = file.size;
 
+        // TODO: separate this for better readability
+
+        let adapter = getAdapter(chosenAdapter);
+
+        adapter
+            ?.on('error', (error: any) => {
+                console.log(`error uploading`);
+
+                if (error instanceof CanceledError) {
+                    uploadStatus = getDefaultUploadStatus();
+                    return;
+                }
+
+                uploadStatus.error = true;
+                uploadStatus.uploading = false;
+                uploadStatus.errorMessage = error;
+                console.error(error);
+            })
+            .on('progress', () => {
+                console.log(`uploading...`);
+            })
+            .on('complete', () => {
+                console.log(`upload complete`);
+
+                uploadStatus.uploading = false;
+                uploadStatus.uploaded = true;
+
+                console.log(`finished uploading`);
+            });
+
+        console.log('am I uploading with fetch?', adapter instanceof FetchUploadAdapter);
+
+        uploadController = new UploadController(adapter);
+
         await uploadController.upload(file);
     };
 
     const abortUpload = () => {
         console.log(`aborting upload`);
 
-        uploadController.abort();
+        uploadController?.abort();
     };
 </script>
 
 <main>
+    <pre>{chosenAdapter}</pre>
     {#if uploadStatus.uploading}
         <p>Uploading...</p>
 
@@ -113,6 +137,10 @@
         <form>
             <label id="file-upload-label" for="upload-button">Upload</label>
             <input type="file" name="file" id="upload-button" on:change={onSelectFile} />
+            <select bind:value={chosenAdapter}>
+                <option value="fetch">Fetch</option>
+                <option value="xml">XML</option>
+            </select>
         </form>
     {/if}
 
