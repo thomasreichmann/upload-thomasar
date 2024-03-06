@@ -11,21 +11,24 @@ export class FetchUploadAdapter extends BaseUploadAdapter implements UploadAdapt
 
     public async upload(file: File, url: string, method: string = 'PUT') {
         try {
-            // const duplex = { duplex: 'half' };
-
-            const response = await fetch(url, {
+            const opt: { [key: string]: unknown } = {
                 method,
-                body: await file.arrayBuffer(),
-                headers: {
-                    'Content-Type': file.type
-                },
                 signal: this.abortController?.signal
-            });
+            };
 
-            console.log(response.type);
+            // Decide if we are going to upload using stream or normal arrayBuffer
+            if (this.shouldUseBlob) {
+                opt.duplex = 'half';
+                opt.body = file.stream();
+            } else {
+                opt.body = file;
+            }
 
-            // const data = await response.json();
-            this.emitComplete('');
+            // Use the loggedStream with the fetch request
+            const res = await fetch(url, opt);
+
+            console.log(res.type);
+            this.emitComplete(res.statusText);
         } catch (error) {
             // Assuming error is of type Error for proper error message extraction
             this.emitError(error instanceof Error ? error.message : String(error));

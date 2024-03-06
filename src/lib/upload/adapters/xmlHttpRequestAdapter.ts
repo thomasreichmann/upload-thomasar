@@ -9,7 +9,7 @@ export class XmlHttpRequestAdapter extends BaseUploadAdapter implements UploadAd
         super();
     }
 
-    public async upload(file: File, url: string, method: HttpMethod = 'PUT'): Promise<unknown> {
+    public async upload(file: File, url: string, method: HttpMethod = 'PUT'): Promise<void> {
         return new Promise((resolve) => {
             this.request = new XMLHttpRequest();
 
@@ -20,7 +20,7 @@ export class XmlHttpRequestAdapter extends BaseUploadAdapter implements UploadAd
                 }
             });
             this.request.addEventListener('loadend', () => {
-                resolve(this.request?.readyState === 4 && this.request.status === 200);
+                resolve();
             });
             this.request.open(method, url, true);
             this.request.setRequestHeader('Content-Type', file.type);

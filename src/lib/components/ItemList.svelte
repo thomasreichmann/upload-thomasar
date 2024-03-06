@@ -43,7 +43,7 @@
         flex-direction: column;
         gap: 6px;
 
-        max-width: 25vw;
+        max-width: 75vw;
     }
 
     li {

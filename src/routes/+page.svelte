@@ -2,10 +2,10 @@
     import type { Upload } from '$lib/types/uploadTypes';
     import ItemList from '$lib/components/ItemList.svelte';
     import { CanceledError } from 'axios';
-    import type { UploadAdapter } from '$lib/upload/uploadInterface';
     import { FetchUploadAdapter } from '$lib/upload/adapters/fetchAdapter';
     import { XmlHttpRequestAdapter } from '$lib/upload/adapters/xmlHttpRequestAdapter';
     import { UploadController } from '$lib/upload/uploadBase';
+    import { FileButton } from '@skeletonlabs/skeleton';
 
     const abortController = new AbortController();
     let uploadController: UploadController;
@@ -15,12 +15,10 @@
     let chosenAdapter: Adapters = 'fetch';
 
     const getAdapter = (chosenAdapter: Adapters) => {
-        if (chosenAdapter == 'fetch') {
-            return new FetchUploadAdapter(abortController);
-        } else if (chosenAdapter == 'xml') {
+        if (chosenAdapter == 'xml') {
             return new XmlHttpRequestAdapter();
         } else {
-            return new FetchUploadAdapter(abortController);
+            return new FetchUploadAdapter(abortController, false);
         }
     };
 
@@ -63,11 +61,9 @@
         { title: 'upload itemupload item', url: '44444444' }
     ];
 
-    const onSelectFile = async (e: Event) => {
-        const files = (e.target as HTMLInputElement).files;
+    let files: FileList;
 
-        if (!files || files.length == 0) return;
-
+    $: if (files) {
         const file = files[0];
 
         uploadStatus.uploading = true;
@@ -78,7 +74,7 @@
         let adapter = getAdapter(chosenAdapter);
 
         adapter
-            ?.on('error', (error: any) => {
+            ?.on('error', (error: unknown) => {
                 console.log(`error uploading`);
 
                 if (error instanceof CanceledError) {
@@ -88,11 +84,11 @@
 
                 uploadStatus.error = true;
                 uploadStatus.uploading = false;
-                uploadStatus.errorMessage = error;
+                uploadStatus.errorMessage = String(error);
                 console.error(error);
             })
-            .on('progress', () => {
-                console.log(`uploading...`);
+            .on('progress', (progress) => {
+                console.log(`uploading... : ${progress}`);
             })
             .on('complete', () => {
                 console.log(`upload complete`);
@@ -103,22 +99,21 @@
                 console.log(`finished uploading`);
             });
 
-        console.log('am I uploading with fetch?', adapter instanceof FetchUploadAdapter);
-
         uploadController = new UploadController(adapter);
 
-        await uploadController.upload(file);
-    };
+        uploadController.upload(file).then(console.log);
+    }
 
     const abortUpload = () => {
         console.log(`aborting upload`);
 
         uploadController?.abort();
+
+        uploadStatus = getDefaultUploadStatus();
     };
 </script>
 
 <main>
-    <pre>{chosenAdapter}</pre>
     {#if uploadStatus.uploading}
         <p>Uploading...</p>
 
@@ -126,7 +121,7 @@
         <pre>{formatBytes(uploadStatus.loaded)}/{formatBytes(uploadStatus.total)}</pre>
         <progress value={uploadStatus.loaded} max={uploadStatus.total}></progress>
         <pre>estimated time left: {Math.floor(uploadStatus.estimatedTimeLeft)}s</pre>
-        <button id="cancel-button" on:click={abortUpload}>cancel</button>
+        <button class="btn-base" id="cancel-button" on:click={abortUpload}>cancel</button>
     {:else if uploadStatus.uploaded}
         <p>Uploaded!</p>
     {:else if uploadStatus.error}
@@ -135,8 +130,9 @@
     {/if}
     {#if !uploadStatus.uploading}
         <form>
-            <label id="file-upload-label" for="upload-button">Upload</label>
-            <input type="file" name="file" id="upload-button" on:change={onSelectFile} />
+            <!--            <label id="file-upload-label" for="upload-button">Upload</label>-->
+            <!--            <input type="file" name="file" id="upload-button" class="btn" bind:files />-->
+            <FileButton name="upload-button">Upload</FileButton>
             <select bind:value={chosenAdapter}>
                 <option value="fetch">Fetch</option>
                 <option value="xml">XML</option>
@@ -150,23 +146,6 @@
 <style>
     input[type='file'] {
         display: none;
-    }
-
-    #cancel-button {
-        background-color: #650d1b;
-
-        border-radius: 16px;
-        padding: 5px 10px;
-
-        font-size: 2em;
-
-        transition: background-color ease 100ms;
-
-        cursor: pointer;
-
-        &:hover {
-            background-color: #5b0b18;
-        }
     }
 
     #file-upload-label {
