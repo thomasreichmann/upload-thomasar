@@ -1,11 +1,11 @@
 <script lang="ts">
     import type { Upload } from '$lib/types/uploadTypes';
-    import ItemList from '$lib/components/ItemList.svelte';
     import { CanceledError } from 'axios';
     import { FetchUploadAdapter } from '$lib/upload/adapters/fetchAdapter';
     import { XmlHttpRequestAdapter } from '$lib/upload/adapters/xmlHttpRequestAdapter';
     import { UploadController } from '$lib/upload/uploadBase';
     import { FileButton } from '@skeletonlabs/skeleton';
+    import ItemList from '$lib/components/ItemList.svelte';
 
     const abortController = new AbortController();
     let uploadController: UploadController;
@@ -130,9 +130,7 @@
     {/if}
     {#if !uploadStatus.uploading}
         <form>
-            <!--            <label id="file-upload-label" for="upload-button">Upload</label>-->
-            <!--            <input type="file" name="file" id="upload-button" class="btn" bind:files />-->
-            <FileButton name="upload-button">Upload</FileButton>
+            <FileButton name="upload-button" bind:files>Upload</FileButton>
             <select bind:value={chosenAdapter}>
                 <option value="fetch">Fetch</option>
                 <option value="xml">XML</option>
@@ -140,31 +138,10 @@
         </form>
     {/if}
 
-    <ItemList {items} onClose={console.log} />
+    <ItemList {items} on:close={console.log} />
 </main>
 
 <style>
-    input[type='file'] {
-        display: none;
-    }
-
-    #file-upload-label {
-        background-color: #650d1b;
-
-        border-radius: 16px;
-        padding: 5px 10px;
-
-        font-size: 2em;
-
-        transition: background-color ease 100ms;
-
-        cursor: pointer;
-
-        &:hover {
-            background-color: #5b0b18;
-        }
-    }
-
     main {
         display: flex;
         flex-direction: column;
@@ -172,26 +149,7 @@
         align-items: center;
 
         gap: 24px;
-    }
-
-    :global(button) {
-        border: none;
-        color: #ffffff;
-        cursor: pointer;
-    }
-
-    :global(body) {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-
         height: 100vh;
         width: 100vw;
-
-        background-color: #211a1e;
-
-        color: aliceblue;
-        font-family: Roboto, sans-serif;
     }
 </style>

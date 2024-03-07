@@ -1,6 +1,9 @@
 <script>
 	import "../app.pcss";
     import './normalize.css'
+    import { AppShell } from '@skeletonlabs/skeleton';
 </script>
 
-<slot></slot>
+<AppShell>
+    <slot />
+</AppShell>
