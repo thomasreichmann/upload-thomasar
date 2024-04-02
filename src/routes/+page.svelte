@@ -1,20 +1,19 @@
 <script lang="ts">
-    import type { Upload } from '$lib/types/uploadTypes';
+    import type { Adapter, Upload } from '$lib/types/uploadTypes';
     import { CanceledError } from 'axios';
     import { FetchUploadAdapter } from '$lib/upload/adapters/fetchAdapter';
     import { XmlHttpRequestAdapter } from '$lib/upload/adapters/xmlHttpRequestAdapter';
     import { UploadController } from '$lib/upload/uploadBase';
-    import { FileButton } from '@skeletonlabs/skeleton';
+    import { Accordion, AccordionItem, FileButton } from '@skeletonlabs/skeleton';
     import ItemList from '$lib/components/ItemList.svelte';
+    import { slide } from 'svelte/transition';
 
     const abortController = new AbortController();
     let uploadController: UploadController;
 
-    type Adapters = 'fetch' | 'xml';
+    let chosenAdapter: Adapter = 'fetch';
 
-    let chosenAdapter: Adapters = 'fetch';
-
-    const getAdapter = (chosenAdapter: Adapters) => {
+    const getAdapter = (chosenAdapter: Adapter) => {
         if (chosenAdapter == 'xml') {
             return new XmlHttpRequestAdapter();
         } else {
@@ -128,15 +127,49 @@
         <p>Error uploading</p>
         <pre>{uploadStatus.errorMessage}</pre>
     {/if}
-    {#if !uploadStatus.uploading}
-        <form>
-            <FileButton name="upload-button" bind:files>Upload</FileButton>
-            <select bind:value={chosenAdapter}>
-                <option value="fetch">Fetch</option>
-                <option value="xml">XML</option>
-            </select>
+    <div class="flex justify-center">
+        <form class="flex items-start justify-center gap-4">
+            <div class="invisible w-[200px]" />
+
+            <div class="shrink-0">
+                <FileButton name="upload-button" bind:files>Upload</FileButton>
+            </div>
+
+            <div class="w-[200px] shrink-0 basis-auto">
+                <Accordion>
+                    <AccordionItem open>
+                        <svelte:fragment slot="summary">Advanced options</svelte:fragment>
+                        <svelte:fragment slot="content">
+                            <div class="space-y-4">
+                                <label for="adapter-select" class="label">
+                                    <span class="text-sm">Upload adapter</span>
+                                    <select
+                                        name="adapter-select"
+                                        id="adapter-select"
+                                        class="select"
+                                        bind:value={chosenAdapter}
+                                    >
+                                        <option value="fetch">Fetch</option>
+                                        <option value="xml">XML</option>
+                                    </select>
+                                </label>
+
+                                {#if chosenAdapter === 'fetch'}
+                                    <label
+                                        class="flex items-center space-x-2"
+                                        transition:slide={{ duration: 250 }}
+                                    >
+                                        <input class="checkbox" type="checkbox" checked />
+                                        <span class="text-sm">Use blob</span>
+                                    </label>
+                                {/if}
+                            </div>
+                        </svelte:fragment>
+                    </AccordionItem>
+                </Accordion>
+            </div>
         </form>
-    {/if}
+    </div>
 
     <ItemList {items} on:close={console.log} />
 </main>

@@ -11,3 +11,4 @@ export type GeneratePresignedUrlRequest = {
     filename: string;
     contentType: string;
 };
+export type Adapter = 'fetch' | 'xml';
