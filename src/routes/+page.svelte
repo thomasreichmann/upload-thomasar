@@ -1,23 +1,30 @@
 <script lang="ts">
-    import type { Adapter, Upload } from '$lib/types/uploadTypes';
-    import { CanceledError } from 'axios';
+    import {
+        type Adapter,
+        CanceledError,
+        type Upload,
+        type UploadOptions
+    } from '$lib/types/uploadTypes';
     import { FetchUploadAdapter } from '$lib/upload/adapters/fetchAdapter';
     import { XmlHttpRequestAdapter } from '$lib/upload/adapters/xmlHttpRequestAdapter';
     import { UploadController } from '$lib/upload/uploadBase';
-    import { Accordion, AccordionItem, FileButton } from '@skeletonlabs/skeleton';
+    import { Accordion, AccordionItem, CodeBlock, FileButton } from '@skeletonlabs/skeleton';
     import ItemList from '$lib/components/ItemList.svelte';
     import { slide } from 'svelte/transition';
+    import AdvancedOptions from '$lib/components/AdvancedOptions.svelte';
 
-    const abortController = new AbortController();
     let uploadController: UploadController;
 
-    let chosenAdapter: Adapter = 'fetch';
+    let options: UploadOptions = {
+        doStreamUpload: false,
+        adapter: 'xml'
+    };
 
     const getAdapter = (chosenAdapter: Adapter) => {
         if (chosenAdapter == 'xml') {
             return new XmlHttpRequestAdapter();
         } else {
-            return new FetchUploadAdapter(abortController, false);
+            return new FetchUploadAdapter(options.doStreamUpload);
         }
     };
 
@@ -42,6 +49,7 @@
             // bytes
             total: 0,
             loaded: 0,
+            percentLoaded: 0,
             // bytes per second
             estimatedSpeed: 0,
             // seconds
@@ -60,23 +68,22 @@
         { title: 'upload itemupload item', url: '44444444' }
     ];
 
-    let files: FileList;
+    let files: File[];
 
-    $: if (files) {
+    function uploadFiles(files: File[]) {
+        console.log(`files changed: ${files.length}, ${JSON.stringify(files)}`);
+
+        // TODO: Refactor this to accept multiple files, for now we will just take the first one
         const file = files[0];
 
         uploadStatus.uploading = true;
         uploadStatus.total = file.size;
 
-        // TODO: separate this for better readability
-
-        let adapter = getAdapter(chosenAdapter);
+        const adapter = getAdapter(options.adapter);
 
         adapter
-            ?.on('error', (error: unknown) => {
-                console.log(`error uploading`);
-
-                if (error instanceof CanceledError) {
+            ?.on('error', (error) => {
+                if ((error as Error) instanceof CanceledError) {
                     uploadStatus = getDefaultUploadStatus();
                     return;
                 }
@@ -86,21 +93,23 @@
                 uploadStatus.errorMessage = String(error);
                 console.error(error);
             })
-            .on('progress', (progress) => {
-                console.log(`uploading... : ${progress}`);
+            .on('progress', (loaded) => {
+                uploadStatus.loaded = loaded;
+                uploadStatus.percentLoaded = loaded / file.size;
             })
             .on('complete', () => {
                 console.log(`upload complete`);
-
                 uploadStatus.uploading = false;
                 uploadStatus.uploaded = true;
-
                 console.log(`finished uploading`);
             });
 
         uploadController = new UploadController(adapter);
+        uploadController.upload(file);
+    }
 
-        uploadController.upload(file).then(console.log);
+    $: if (files) {
+        uploadFiles(files);
     }
 
     const abortUpload = () => {
@@ -118,7 +127,7 @@
 
         <pre>{formatBytes(uploadStatus.estimatedSpeed)}/s</pre>
         <pre>{formatBytes(uploadStatus.loaded)}/{formatBytes(uploadStatus.total)}</pre>
-        <progress value={uploadStatus.loaded} max={uploadStatus.total}></progress>
+        <progress class="w-[50%]" value={uploadStatus.percentLoaded} max={1}></progress>
         <pre>estimated time left: {Math.floor(uploadStatus.estimatedTimeLeft)}s</pre>
         <button class="btn-base" id="cancel-button" on:click={abortUpload}>cancel</button>
     {:else if uploadStatus.uploaded}
@@ -136,40 +145,12 @@
             </div>
 
             <div class="w-[200px] shrink-0 basis-auto">
-                <Accordion>
-                    <AccordionItem open>
-                        <svelte:fragment slot="summary">Advanced options</svelte:fragment>
-                        <svelte:fragment slot="content">
-                            <div class="space-y-4">
-                                <label for="adapter-select" class="label">
-                                    <span class="text-sm">Upload adapter</span>
-                                    <select
-                                        name="adapter-select"
-                                        id="adapter-select"
-                                        class="select"
-                                        bind:value={chosenAdapter}
-                                    >
-                                        <option value="fetch">Fetch</option>
-                                        <option value="xml">XML</option>
-                                    </select>
-                                </label>
-
-                                {#if chosenAdapter === 'fetch'}
-                                    <label
-                                        class="flex items-center space-x-2"
-                                        transition:slide={{ duration: 250 }}
-                                    >
-                                        <input class="checkbox" type="checkbox" checked />
-                                        <span class="text-sm">Use blob</span>
-                                    </label>
-                                {/if}
-                            </div>
-                        </svelte:fragment>
-                    </AccordionItem>
-                </Accordion>
+                <AdvancedOptions bind:options />
             </div>
         </form>
     </div>
+
+    <pre>{JSON.stringify(options)}</pre>
 
     <ItemList {items} on:close={console.log} />
 </main>

@@ -5,7 +5,7 @@ import { FetchUploadAdapter } from '$lib/upload/adapters/fetchAdapter';
 export class BaseUploadAdapter {
     private progressHandlers: UploadEventHandler<number>[] = [];
     private completeHandlers: UploadEventHandler<string>[] = [];
-    private errorHandlers: UploadEventHandler<string>[] = [];
+    private errorHandlers: UploadEventHandler<Error>[] = [];
 
     protected emitProgress(progress: number) {
         this.progressHandlers.forEach((handler) => handler(progress));
@@ -15,13 +15,10 @@ export class BaseUploadAdapter {
         this.completeHandlers.forEach((handler) => handler(url));
     }
 
-    protected emitError(error: string) {
+    protected emitError(error: Error) {
         this.errorHandlers.forEach((handler) => handler(error));
     }
 
-    public on(event: 'progress', handler: UploadEventHandler<number>): this;
-    public on(event: 'complete', handler: UploadEventHandler<string>): this;
-    public on(event: 'error', handler: UploadEventHandler<string>): this;
     public on(event: UploadEvent, handler: UploadEventHandler<never>) {
         switch (event) {
             case 'progress':
@@ -31,7 +28,7 @@ export class BaseUploadAdapter {
                 this.completeHandlers.push(handler as UploadEventHandler<string>);
                 break;
             case 'error':
-                this.errorHandlers.push(handler as UploadEventHandler<string>);
+                this.errorHandlers.push(handler as UploadEventHandler<Error>);
                 break;
             default:
                 throw new Error(`Unsupported event type: ${event}`);
@@ -44,8 +41,8 @@ export class BaseUploadAdapter {
 export class UploadController {
     private uploadAdapter: UploadAdapter;
 
-    constructor(uploadAdapter: UploadAdapter | null = null) {
-        this.uploadAdapter = uploadAdapter ?? new FetchUploadAdapter();
+    constructor(uploadAdapter: UploadAdapter) {
+        this.uploadAdapter = uploadAdapter;
     }
 
     public async upload(file: File) {

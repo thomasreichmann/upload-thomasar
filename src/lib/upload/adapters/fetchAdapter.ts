@@ -1,11 +1,11 @@
 import { BaseUploadAdapter } from '$lib/upload/uploadBase';
 import type { UploadAdapter } from '$lib/upload/uploadInterface';
+import { CanceledError } from '$lib/types/uploadTypes';
 
 export class FetchUploadAdapter extends BaseUploadAdapter implements UploadAdapter {
-    constructor(
-        private abortController?: AbortController,
-        private shouldUseBlob: boolean = true
-    ) {
+    abortController = new AbortController();
+
+    constructor(private shouldUseBlob: boolean = true) {
         super();
     }
 
@@ -27,11 +27,15 @@ export class FetchUploadAdapter extends BaseUploadAdapter implements UploadAdapt
             // Use the loggedStream with the fetch request
             const res = await fetch(url, opt);
 
-            console.log(res.type);
             this.emitComplete(res.statusText);
         } catch (error) {
             // Assuming error is of type Error for proper error message extraction
-            this.emitError(error instanceof Error ? error.message : String(error));
+            if ((error as Error).name == 'AbortError') {
+                this.emitError(new CanceledError());
+            } else {
+                console.log(error);
+                this.emitError(error as Error);
+            }
         }
     }
 

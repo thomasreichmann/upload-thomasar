@@ -12,3 +12,10 @@ export type GeneratePresignedUrlRequest = {
     contentType: string;
 };
 export type Adapter = 'fetch' | 'xml';
+
+export interface UploadOptions {
+    adapter: Adapter;
+    doStreamUpload: boolean;
+}
+
+export class CanceledError extends Error {}

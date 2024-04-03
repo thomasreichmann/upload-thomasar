@@ -11,7 +11,7 @@ export interface UploadAdapter {
 
     on(event: 'complete', handler: (url: string) => void): this;
 
-    on(event: 'error', handler: (error: string) => void): this;
+    on(event: 'error', handler: (error: Error) => void): this;
 }
 
 export type UploadEventHandler<T> = (event: T) => void;
