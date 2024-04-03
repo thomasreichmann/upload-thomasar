@@ -1,4 +1,4 @@
-import type { GeneratePresignedUrlResponse } from '$lib/types/uploadTypes';
+import { type GeneratePresignedUrlResponse } from '$lib/types/uploadTypes';
 import type { UploadAdapter, UploadEvent, UploadEventHandler } from '$lib/upload/uploadInterface';
 
 export class BaseUploadAdapter {
@@ -47,7 +47,7 @@ export class UploadController {
     public async upload(file: File) {
         const url = (await this.getPresignedUrl(file.name, file.type)).url;
 
-        return this.uploadAdapter.upload(file, url, 'PUT');
+        await this.uploadAdapter.upload(file, url, 'PUT');
     }
 
     public async abort() {
