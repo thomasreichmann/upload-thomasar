@@ -1,6 +1,5 @@
 import type { GeneratePresignedUrlResponse } from '$lib/types/uploadTypes';
 import type { UploadAdapter, UploadEvent, UploadEventHandler } from '$lib/upload/uploadInterface';
-import { FetchUploadAdapter } from '$lib/upload/adapters/fetchAdapter';
 
 export class BaseUploadAdapter {
     private progressHandlers: UploadEventHandler<number>[] = [];

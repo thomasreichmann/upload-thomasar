@@ -8,9 +8,8 @@
     import { FetchUploadAdapter } from '$lib/upload/adapters/fetchAdapter';
     import { XmlHttpRequestAdapter } from '$lib/upload/adapters/xmlHttpRequestAdapter';
     import { UploadController } from '$lib/upload/uploadBase';
-    import { Accordion, AccordionItem, CodeBlock, FileButton } from '@skeletonlabs/skeleton';
+    import { FileButton } from '@skeletonlabs/skeleton';
     import ItemList from '$lib/components/ItemList.svelte';
-    import { slide } from 'svelte/transition';
     import AdvancedOptions from '$lib/components/AdvancedOptions.svelte';
 
     let uploadController: UploadController;
