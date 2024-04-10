@@ -1,15 +1,8 @@
 <script lang="ts">
     import { formatBytes } from '$lib';
     import type { UploadStatus } from '$lib/types/uploadTypes';
-    import { createEventDispatcher } from 'svelte';
 
     export let uploadStatus: UploadStatus;
-
-    const dispatch = createEventDispatcher();
-
-    const onAbort = () => {
-        dispatch('abort');
-    };
 </script>
 
 {#if uploadStatus.uploading}
