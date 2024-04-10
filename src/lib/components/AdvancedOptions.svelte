@@ -7,7 +7,7 @@
 </script>
 
 <Accordion>
-    <AccordionItem open>
+    <AccordionItem>
         <svelte:fragment slot="summary">Advanced options</svelte:fragment>
         <svelte:fragment slot="content">
             <div class="space-y-4">

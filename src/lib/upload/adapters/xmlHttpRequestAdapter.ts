@@ -21,6 +21,8 @@ export class XmlHttpRequestAdapter extends BaseUploadAdapter implements UploadAd
             });
 
             this.request.addEventListener('loadend', () => {
+                if (this.request?.status == 0) return; // Status 0 = request aborted
+
                 this.emitComplete(this.request?.statusText || 'Upload completed');
                 resolve();
             });

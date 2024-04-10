@@ -10,17 +10,15 @@ export function setupUploadEvents(
     return adapter
         .on('error', (error: Error) => {
             if ((error as Error) instanceof CanceledError) {
-                uploadStatusStore.set(getDefaultUploadStatus());
-                return;
+                error.message = 'Upload aborted.';
             }
 
             uploadStatusStore.update((status) => ({
                 ...status,
                 error: true,
                 uploading: false,
-                errorMessage: String(error)
+                errorMessage: error.message
             }));
-            console.error(error);
         })
         .on('progress', (loaded) => {
             uploadStatusStore.update((status) => ({
@@ -31,8 +29,8 @@ export function setupUploadEvents(
         })
         .on('complete', () => {
             console.log(`upload complete`);
-            uploadStatusStore.update((status) => ({
-                ...status,
+            uploadStatusStore.update(() => ({
+                ...getDefaultUploadStatus(),
                 uploading: false,
                 uploaded: true
             }));
