@@ -1,7 +1,7 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { sql } from "drizzle-orm";
+import { InferSelectModel, sql } from "drizzle-orm";
 import { index, json, pgTableCreator, serial, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 /**
@@ -61,3 +61,5 @@ export function getDefaultUserSettings() {
 		newOne: "defaultval",
 	};
 }
+
+export type User = InferSelectModel<typeof users>;
