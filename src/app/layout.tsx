@@ -11,6 +11,7 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { theme } from "~/app/_components/theme";
+import Settings from "~/app/_components/settings";
 
 export const metadata: Metadata = {
 	title: "Create T3 App",
@@ -24,7 +25,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 			<body>
 				<ThemeProvider theme={theme}>
 					<CssBaseline />
-					<TRPCReactProvider>{children}</TRPCReactProvider>
+					<TRPCReactProvider>
+						<Settings />
+						{children}
+					</TRPCReactProvider>
 				</ThemeProvider>
 			</body>
 		</html>
