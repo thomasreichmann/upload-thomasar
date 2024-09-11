@@ -1,10 +1,15 @@
 import React, { useRef } from "react";
 import { Backdrop, Fade, LinearProgress, Modal, Paper, Slide, Typography } from "@mui/material";
+import { InferSelectModel } from "drizzle-orm";
+import { users } from "~/server/db/schema";
 
 interface SettingsModalProps {
 	open: boolean;
 	onClose?: () => void;
+	user: InferSelectModel<typeof users>;
 }
+
+const isArrayOfObjects = (data: unknown): data is Array<any> => Array.isArray(data);
 
 export default function SettingsModal(props: SettingsModalProps) {
 	return (
@@ -20,7 +25,7 @@ export default function SettingsModal(props: SettingsModalProps) {
 }
 
 function ModalBase(
-	props: SettingsModalProps & {
+	props: Partial<SettingsModalProps> & {
 		children: React.ReactNode;
 		loading?: boolean;
 	},
@@ -29,7 +34,7 @@ function ModalBase(
 
 	return (
 		<Modal
-			open={props.open}
+			open={props.open ?? false}
 			onClose={props.onClose}
 			aria-labelledby="modal-modal-title"
 			aria-describedby="modal-modal-description"
