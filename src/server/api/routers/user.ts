@@ -33,24 +33,27 @@ export const userRouter = createTRPCRouter({
 			user = insertedUsers[0];
 		}
 
-		if (user) {
-			// Merge the default settings with the user settings
-			const defaultSettings = getDefaultUserSettings();
-			const userSettings = user.settings;
+		if (!user)
+			throw new Error(
+				"Somehow user wasn't created or found, this should never happen, good luck debugging!",
+			);
 
-			// Filter user settings to only include keys that exist in the default settings
-			user.settings = Object.keys(defaultSettings).reduce((acc, key) => {
-				const typedKey = key as keyof UserSettings;
+		// Merge the default settings with the user settings
+		const defaultSettings = getDefaultUserSettings();
+		const userSettings = user.settings;
 
-				if (typedKey in userSettings) {
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-expect-error
-					acc[typedKey] = userSettings[typedKey];
-				}
+		// Filter user settings to only include keys that exist in the default settings
+		user.settings = Object.keys(defaultSettings).reduce((acc, key) => {
+			const typedKey = key as keyof UserSettings;
 
-				return acc;
-			}, {} as UserSettings);
-		}
+			if (typedKey in userSettings) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-expect-error
+				acc[typedKey] = userSettings[typedKey];
+			}
+
+			return acc;
+		}, {} as UserSettings);
 
 		return user;
 	}),
@@ -91,9 +94,6 @@ export const userRouter = createTRPCRouter({
 
 				user = insertedUsers[0];
 			}
-
-			// Set the sessionId in the cookies
-			cookies().set("sessionId", user!.sessionId);
 
 			return user;
 		}

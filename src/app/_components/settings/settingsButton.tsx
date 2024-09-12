@@ -5,6 +5,7 @@ import { IconButton } from "@mui/material";
 import SettingsModal from "~/app/_components/settings/settingsModal";
 import { Settings } from "@mui/icons-material";
 import { api } from "~/trpc/react";
+import { setCookie } from "cookies-next";
 
 export default function SettingsButton() {
 	const [open, setOpen] = useState(false);
@@ -12,6 +13,8 @@ export default function SettingsButton() {
 	const [user] = api.user.get.useSuspenseQuery();
 
 	if (!user) throw new Error("User not found");
+
+	setCookie("sessionId", user.sessionId);
 
 	useEffect(() => {
 		if (user.settings.autoOpen) {

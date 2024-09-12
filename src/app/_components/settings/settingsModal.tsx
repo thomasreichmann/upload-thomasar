@@ -14,21 +14,19 @@ const isArrayOfObjects = (data: unknown): data is Array<User> => Array.isArray(d
 
 export default function SettingsModal(props: SettingsModalProps) {
 	const updateUser = api.user.update.useMutation({
-		onSuccess: (data) => {
-			let user: User | undefined;
+		async onMutate(updatedUser) {
+			await utils.user.get.cancel();
 
-			if (isArrayOfObjects(data)) {
-				if (data.length > 0 && data[0]?.sessionId) {
-					user = data[0];
-				}
-			} else if (data && !isArrayOfObjects(data)) {
-				user = data;
-			}
+			const previousUser = utils.user.get.getData();
 
-			if (user) {
-				utils.user.get.setData(undefined, () => user);
-			}
+			utils.user.get.setData(undefined, () => updatedUser as User);
 
+			return { previousUser };
+		},
+		onError(error, variables, context) {
+			utils.user.get.setData(undefined, context?.previousUser);
+		},
+		onSettled() {
 			void utils.user.invalidate();
 		},
 	});

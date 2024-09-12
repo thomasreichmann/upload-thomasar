@@ -60,9 +60,6 @@ export function getDefaultUserSettings() {
 	return {
 		autoOpen: false,
 		delay: 1000,
-		configOne: "",
-		configTwo: 0,
-		shouldSendNotification: false,
 	};
 }
 
