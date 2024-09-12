@@ -6,11 +6,11 @@ import { api } from "~/trpc/server";
 async function Settings() {
 	const user = await api.user.get();
 
-	if (!user) throw new Error("User not found");
+	void api.user.get.prefetch();
 
 	return (
 		<>
-			<SettingsButton user={user} />
+			<SettingsButton />
 			<CookieSetter name="sessionId" value={user?.sessionId ?? "not found"} />
 		</>
 	);

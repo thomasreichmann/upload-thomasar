@@ -1,6 +1,6 @@
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { eq } from "drizzle-orm";
-import { getDefaultUserSettings, users } from "~/server/db/schema";
+import { getDefaultUserSettings, users, UserSettings } from "~/server/db/schema";
 import { createInsertSchema } from "drizzle-zod";
 import { cookies } from "next/headers";
 
@@ -34,8 +34,22 @@ export const userRouter = createTRPCRouter({
 		}
 
 		if (user) {
-			// Before returning the user, merge the default settings with the user settings in case there were new settings added to the schema
-			user.settings = { ...getDefaultUserSettings(), ...user.settings };
+			// Merge the default settings with the user settings
+			const defaultSettings = getDefaultUserSettings();
+			const userSettings = user.settings;
+
+			// Filter user settings to only include keys that exist in the default settings
+			user.settings = Object.keys(defaultSettings).reduce((acc, key) => {
+				const typedKey = key as keyof UserSettings;
+
+				if (typedKey in userSettings) {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-expect-error
+					acc[typedKey] = userSettings[typedKey];
+				}
+
+				return acc;
+			}, {} as UserSettings);
 		}
 
 		return user;

@@ -51,6 +51,11 @@ export const posts = createTable(
 
 export type UserSettings = ReturnType<typeof getDefaultUserSettings>;
 
+/** Get the default settings for a user
+ * 	This is used as the source of truth for what settings the user should have
+ * 	anything that is added/removed from here will be shown/hidden in the settings modal
+ * 	but settings will only be added to the user after they are saved in the settings modal
+ * */
 export function getDefaultUserSettings() {
 	return {
 		autoOpen: false,
@@ -58,7 +63,6 @@ export function getDefaultUserSettings() {
 		configOne: "",
 		configTwo: 0,
 		shouldSendNotification: false,
-		newOne: "defaultval",
 	};
 }
 
