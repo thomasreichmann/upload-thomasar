@@ -11,7 +11,7 @@ async function Settings() {
 	return (
 		<>
 			<SettingsButton />
-			<CookieSetter name="sessionId" value={user?.sessionId ?? "not found"} />
+			<CookieSetter name="sessionId" value={user.sessionId} />
 		</>
 	);
 }

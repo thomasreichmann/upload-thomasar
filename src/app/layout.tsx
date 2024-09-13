@@ -12,6 +12,8 @@ import "@fontsource/roboto/700.css";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { theme } from "~/app/_components/theme";
 import Settings from "~/app/_components/settings";
+import { HydrateClient } from "~/trpc/server";
+import React from "react";
 
 export const metadata: Metadata = {
 	title: "Create T3 App",
@@ -26,8 +28,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 				<ThemeProvider theme={theme}>
 					<CssBaseline />
 					<TRPCReactProvider>
-						<Settings />
-						{children}
+						<HydrateClient>
+							<Settings />
+							{children}
+						</HydrateClient>
 					</TRPCReactProvider>
 				</ThemeProvider>
 			</body>
