@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useRef } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { Backdrop, Fade, LinearProgress, Modal, Paper, Slide, Typography } from "@mui/material";
 import { User } from "~/server/db/schema";
 import ChangeFieldInput from "~/app/_components/changeFieldInput";
@@ -29,9 +29,13 @@ export default function SettingsModal(props: SettingsModalProps) {
 			void utils.user.invalidate();
 		},
 	});
+
 	const utils = api.useUtils();
 	const formRef = useRef<HTMLFormElement>(null);
 	const sessionIdInputRef = useRef<HTMLInputElement>(null);
+	const [loadingSessionId, setLoadingSessionId] = useState(false);
+
+	const isLoading = updateUser.isPending || loadingSessionId;
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -52,8 +56,11 @@ export default function SettingsModal(props: SettingsModalProps) {
 		 * and then re-fetch the user ignoring the settings
 		 */
 		if (sessionId !== props.user.sessionId) {
+			setLoadingSessionId(true);
 			setCookie("sessionId", sessionId);
-			void utils.user.invalidate();
+			void utils.user.invalidate().finally(() => {
+				setLoadingSessionId(false);
+			});
 		} else {
 			updateUser.mutate({
 				...props.user,
@@ -70,7 +77,7 @@ export default function SettingsModal(props: SettingsModalProps) {
 	}, [props.user]);
 
 	return (
-		<ModalBase open={props.open} onClose={props.onClose}>
+		<ModalBase open={props.open} onClose={props.onClose} loading={isLoading}>
 			<Typography id="modal-modal-description" className="mt-2">
 				Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
 			</Typography>
@@ -85,7 +92,7 @@ export default function SettingsModal(props: SettingsModalProps) {
 				<ChangeFieldInput
 					name="sessionId"
 					displayName="Session ID"
-					loading={updateUser.isPending}
+					loading={isLoading}
 					currentValue={props.user.sessionId}
 					type="number"
 					maxLength={6}
@@ -96,7 +103,7 @@ export default function SettingsModal(props: SettingsModalProps) {
 						key={key}
 						currentValue={value}
 						name={key}
-						loading={updateUser.isPending}
+						loading={isLoading}
 					/>
 				))}
 			</form>
