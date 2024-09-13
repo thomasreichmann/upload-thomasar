@@ -58,53 +58,22 @@ export const userRouter = createTRPCRouter({
 		return user;
 	}),
 
-	update: publicProcedure.input(createInsertSchema(users)).mutation(async ({ ctx, input }) => {
-		const ssid = cookies().get("sessionId")?.value;
+	update: publicProcedure
+		.input(createInsertSchema(users).omit({ sessionId: true }))
+		.mutation(async ({ ctx, input }) => {
+			const ssid = cookies().get("sessionId")?.value;
 
-		if (!ssid) {
-			throw new Error("No sessionId found in cookies");
-		}
-
-		/**
-		 * We need to handle two cases here,
-		 * - user is changing settings (sessionId is not changed)
-		 * - user is changing sessionId
-		 *
-		 * if the user is changing the sessionId, we ignore any settings that changed, instead
-		 * we keep the existing sessionId 'object' intact and just find the user with the new sessionId
-		 * and return it as is, if we fail to find the user with the new sessionId, we create a new user
-		 * with the new sessionId and return it (default settings).
-		 */
-
-		// Check if the sessionId is being changed
-		if (input.sessionId !== ssid) {
-			// Find the user with the new sessionId
-			let user = await ctx.db.query.users.findFirst({
-				where: eq(users.sessionId, input.sessionId),
-			});
-
-			// If the user is not found, create a new user
-			if (!user) {
-				const insertedUsers = await ctx.db
-					.insert(users)
-					.values({
-						sessionId: input.sessionId,
-					})
-					.returning();
-
-				user = insertedUsers[0];
+			if (!ssid) {
+				throw new Error("No sessionId found in cookies");
 			}
 
-			return user;
-		}
+			// If the sessionId is not being changed, update the user with the new settings
+			const updatedUsers = await ctx.db
+				.update(users)
+				.set(input as never)
+				.where(eq(users.sessionId, ssid))
+				.returning();
 
-		// If the sessionId is not being changed, update the user with the new settings
-		const updatedUsers = await ctx.db
-			.update(users)
-			.set(input as never)
-			.where(eq(users.sessionId, ssid))
-			.returning();
-
-		return updatedUsers[0];
-	}),
+			return updatedUsers[0];
+		}),
 });

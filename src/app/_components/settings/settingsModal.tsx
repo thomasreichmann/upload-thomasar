@@ -3,14 +3,13 @@ import { Backdrop, Fade, LinearProgress, Modal, Paper, Slide, Typography } from 
 import { User } from "~/server/db/schema";
 import ChangeFieldInput from "~/app/_components/changeFieldInput";
 import { api } from "~/trpc/react";
+import { setCookie } from "cookies-next";
 
 interface SettingsModalProps {
 	open: boolean;
 	onClose?: () => void;
 	user: User;
 }
-
-const isArrayOfObjects = (data: unknown): data is Array<User> => Array.isArray(data);
 
 export default function SettingsModal(props: SettingsModalProps) {
 	const updateUser = api.user.update.useMutation({
@@ -32,6 +31,7 @@ export default function SettingsModal(props: SettingsModalProps) {
 	});
 	const utils = api.useUtils();
 	const formRef = useRef<HTMLFormElement>(null);
+	const sessionIdInputRef = useRef<HTMLInputElement>(null);
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -45,15 +45,28 @@ export default function SettingsModal(props: SettingsModalProps) {
 			}
 			newConfig[data[0]] = data[1] as string;
 		}
-		updateUser.mutate({
-			...props.user,
-			settings: newConfig,
-			sessionId,
-		});
+
+		/**
+		 * Check if we are updating the sessionId
+		 * if we are, instead of updating the user, we should update the sessionId
+		 * and then re-fetch the user ignoring the settings
+		 */
+		if (sessionId !== props.user.sessionId) {
+			setCookie("sessionId", sessionId);
+			void utils.user.invalidate();
+		} else {
+			updateUser.mutate({
+				...props.user,
+				settings: newConfig,
+			});
+		}
 	};
 
 	useEffect(() => {
 		formRef.current?.reset();
+
+		// Hack to make sure that the sessionId input is visually updated after being changed
+		sessionIdInputRef.current?.blur();
 	}, [props.user]);
 
 	return (
@@ -76,6 +89,7 @@ export default function SettingsModal(props: SettingsModalProps) {
 					currentValue={props.user.sessionId}
 					type="number"
 					maxLength={6}
+					ref={sessionIdInputRef}
 				/>
 				{Object.entries(props.user.settings ?? {}).map(([key, value]) => (
 					<ChangeFieldInput

@@ -1,4 +1,4 @@
-import React, { type HTMLInputTypeAttribute } from "react";
+import React, { forwardRef, HTMLInputTypeAttribute } from "react";
 import { Paper, TextField, Typography } from "@mui/material";
 
 interface ChangeFieldInputProps {
@@ -10,7 +10,7 @@ interface ChangeFieldInputProps {
 	maxLength?: number;
 }
 
-export default function ChangeFieldInput(props: ChangeFieldInputProps) {
+const ChangeFieldInput = forwardRef<HTMLInputElement, ChangeFieldInputProps>((props, ref) => {
 	const chooseValueToDisplay = () => {
 		// Add a whitespace character to the end of the value so that when it is " " or null, the input still retains the correct height
 		return (props.currentValue ?? "") + "‎";
@@ -35,7 +35,13 @@ export default function ChangeFieldInput(props: ChangeFieldInputProps) {
 				type={props.type ?? typeof props.currentValue}
 				disabled={props.loading}
 				slotProps={{ htmlInput: { maxLength: props.maxLength } }}
+				inputRef={ref}
 			/>
 		</Paper>
 	);
-}
+});
+
+// Set displayName for the forwardRef component (optional but good practice)
+ChangeFieldInput.displayName = "ChangeFieldInput";
+
+export default ChangeFieldInput;
