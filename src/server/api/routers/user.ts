@@ -55,6 +55,8 @@ export const userRouter = createTRPCRouter({
 			return acc;
 		}, {} as UserSettings);
 
+		user.settings = { ...defaultSettings, ...user.settings };
+
 		return user;
 	}),
 

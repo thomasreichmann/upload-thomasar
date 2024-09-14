@@ -45,6 +45,7 @@ export function getDefaultUserSettings() {
 	return {
 		autoOpen: false,
 		delay: 1000,
+		autoOpenInfo: false,
 	};
 }
 

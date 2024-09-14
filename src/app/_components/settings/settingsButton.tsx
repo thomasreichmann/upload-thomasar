@@ -17,7 +17,7 @@ export default function SettingsButton() {
 	setCookie("sessionId", user.sessionId);
 
 	useEffect(() => {
-		if (user.settings.autoOpen?.toString() == "true") {
+		if (user.settings.autoOpen) {
 			setTimeout(() => {
 				setOpen(true);
 			}, user.settings.delay);

@@ -10,6 +10,7 @@ import {
 interface FileListItemProps {
 	id?: string;
 	name: string;
+	onInfoClick?: () => void;
 }
 
 export default function FileListItem(props: FileListItemProps) {
@@ -20,7 +21,7 @@ export default function FileListItem(props: FileListItemProps) {
 					<IconButton edge="end" aria-label="delete">
 						<LinkIcon />
 					</IconButton>
-					<IconButton edge="end" aria-label="delete">
+					<IconButton edge="end" aria-label="delete" onClick={props.onInfoClick}>
 						<InfoOutlined />
 					</IconButton>
 					<IconButton edge="end" aria-label="folder">

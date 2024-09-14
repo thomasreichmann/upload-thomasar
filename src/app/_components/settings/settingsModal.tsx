@@ -1,9 +1,10 @@
 import React, { FormEvent, useEffect, useRef, useState } from "react";
-import { Backdrop, Fade, LinearProgress, Modal, Paper, Slide, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { User } from "~/server/db/schema";
 import ChangeFieldInput from "~/app/_components/changeFieldInput";
 import { api } from "~/trpc/react";
 import { setCookie } from "cookies-next";
+import ModalBase from "~/app/_components/modalBase";
 
 interface SettingsModalProps {
 	open: boolean;
@@ -117,43 +118,5 @@ export default function SettingsModal(props: SettingsModalProps) {
 				))}
 			</form>
 		</ModalBase>
-	);
-}
-
-function ModalBase(
-	props: Partial<SettingsModalProps> & {
-		children: React.ReactNode;
-		loading?: boolean;
-	},
-) {
-	const containerRef = useRef<HTMLDivElement>(null);
-
-	return (
-		<Modal
-			open={props.open ?? false}
-			onClose={props.onClose}
-			aria-labelledby="modal-modal-title"
-			aria-describedby="modal-modal-description"
-			closeAfterTransition
-			slots={{ backdrop: Backdrop }}
-			slotProps={{
-				backdrop: {
-					timeout: 500,
-				},
-			}}
-		>
-			<Fade in={props.open}>
-				<Paper
-					className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform overflow-hidden p-4 focus-visible:outline-0"
-					component="div"
-					ref={containerRef}
-				>
-					{props.children}
-					<Slide in={props.loading} direction="up" container={containerRef.current}>
-						<LinearProgress className="mt-3" />
-					</Slide>
-				</Paper>
-			</Fade>
-		</Modal>
 	);
 }
