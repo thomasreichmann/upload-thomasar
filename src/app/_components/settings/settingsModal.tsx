@@ -42,12 +42,21 @@ export default function SettingsModal(props: SettingsModalProps) {
 		const formData = new FormData(event.currentTarget);
 		const newConfig: Record<string, string> = {};
 		let sessionId = "";
-		for (const data of formData) {
-			if (data[0] === "sessionId") {
-				sessionId = data[1] as string;
+
+		for (const [key, value] of formData.entries()) {
+			// Handle sessionId separately
+			if (key === "sessionId") {
+				sessionId = value as string;
 				continue;
 			}
-			newConfig[data[0]] = data[1] as string;
+
+			if (value === "true" || value === "false") {
+				(newConfig[key] as unknown as boolean) = value === "true";
+			} else if (!isNaN(Number(value))) {
+				(newConfig[key] as unknown as number) = Number(value);
+			} else {
+				newConfig[key] = value as string;
+			}
 		}
 
 		/**

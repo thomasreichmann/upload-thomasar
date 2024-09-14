@@ -17,12 +17,12 @@ export default function SettingsButton() {
 	setCookie("sessionId", user.sessionId);
 
 	useEffect(() => {
-		if (user.settings.autoOpen) {
+		if (user.settings.autoOpen?.toString() == "true") {
 			setTimeout(() => {
 				setOpen(true);
 			}, user.settings.delay);
 		}
-	}, []);
+	});
 
 	return (
 		<div className="fixed right-0 p-3">
