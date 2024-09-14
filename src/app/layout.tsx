@@ -25,6 +25,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 	return (
 		<html lang="en" className={`${GeistSans.variable}`}>
 			<body>
+				<h1>KJSDHFJKAHSDJKA</h1>
 				<ThemeProvider theme={theme}>
 					<CssBaseline />
 					<TRPCReactProvider>
