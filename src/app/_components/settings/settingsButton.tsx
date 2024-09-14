@@ -22,7 +22,7 @@ export default function SettingsButton() {
 				setOpen(true);
 			}, user.settings.delay);
 		}
-	});
+	}, [user.settings.autoOpen, user.settings.delay]);
 
 	return (
 		<div className="fixed right-0 p-3">
