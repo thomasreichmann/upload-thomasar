@@ -1,6 +1,6 @@
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { eq } from "drizzle-orm";
-import { getDefaultUserSettings, users, UserSettings } from "~/server/db/schema";
+import { getDefaultUserSettings, users, type UserSettings } from "~/server/db/schema";
 import { createInsertSchema } from "drizzle-zod";
 import { cookies } from "next/headers";
 

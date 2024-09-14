@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { List, ListItem, Paper } from "@mui/material";
+import { List, type ListItem, Paper } from "@mui/material";
 import FileListItem from "~/app/_components/files/fileListItem";
 import FileInfoModal from "~/app/_components/files/fileInfoModal";
 import { api } from "~/trpc/react";

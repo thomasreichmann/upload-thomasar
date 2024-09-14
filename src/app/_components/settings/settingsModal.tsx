@@ -1,6 +1,6 @@
-import React, { FormEvent, useEffect, useRef, useState } from "react";
+import React, { type FormEvent, useEffect, useRef, useState } from "react";
 import { Typography } from "@mui/material";
-import { User } from "~/server/db/schema";
+import { type User } from "~/server/db/schema";
 import ChangeFieldInput from "~/app/_components/changeFieldInput";
 import { api } from "~/trpc/react";
 import { setCookie } from "cookies-next";
