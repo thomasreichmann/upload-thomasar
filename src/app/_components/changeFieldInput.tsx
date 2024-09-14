@@ -37,7 +37,6 @@ const ChangeFieldInput = forwardRef<HTMLInputElement, ChangeFieldInputProps>((pr
 				slotProps={{ htmlInput: { maxLength: props.maxLength } }}
 				inputRef={ref}
 			/>
-			type: {typeof props.currentValue}
 		</Paper>
 	);
 });
