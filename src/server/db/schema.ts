@@ -21,9 +21,7 @@ export const users = createTable(
 		createdAt: timestamp("created_at", { withTimezone: true })
 			.default(sql`CURRENT_TIMESTAMP`)
 			.notNull(),
-		updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-			() => new Date(),
-		),
+		updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
 		settings: json("settings")
 			.$type<Partial<UserSettings>>()
 			.default(getDefaultUserSettings())
@@ -46,6 +44,12 @@ export function getDefaultUserSettings() {
 		autoOpen: false,
 		delay: 1000,
 		autoOpenInfo: false,
+		test: 1,
+		test2: 2,
+		test3: 4,
+		test4: 3,
+		test5: 5,
+		test6: 6,
 	};
 }
 

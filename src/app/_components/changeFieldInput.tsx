@@ -1,5 +1,6 @@
-import React, { forwardRef, HTMLInputTypeAttribute } from "react";
-import { Paper, TextField, Typography } from "@mui/material";
+import React, { forwardRef, type HTMLInputTypeAttribute } from "react";
+import { Paper, TextField } from "@mui/material";
+import TooltipTypography from "~/app/_components/tooltipTypography";
 
 interface ChangeFieldInputProps {
 	name: string;
@@ -16,17 +17,16 @@ const ChangeFieldInput = forwardRef<HTMLInputElement, ChangeFieldInputProps>((pr
 		return (props.currentValue ?? "") + "‎";
 	};
 
+	const chooseTooltipTitle = () => props.displayName ?? props.name;
+
 	return (
-		<Paper elevation={2} className="flex w-min flex-col items-center justify-center gap-8 p-4">
-			<Paper
-				elevation={3}
-				className="flex w-fit min-w-28 flex-col items-center justify-center"
-			>
-				<Typography className="whitespace-nowrap p-2">
-					{props.displayName ?? props.name}
-				</Typography>
-				<Paper elevation={4} className="w-full p-2 text-center">
-					<Typography color="text.secondary">{chooseValueToDisplay()}</Typography>
+		<Paper elevation={2} className="flex w-36 flex-col items-center justify-center gap-8 p-4">
+			<Paper elevation={3} className="flex w-full flex-col items-center justify-center">
+				<div className="w-full truncate p-2 text-center">
+					<TooltipTypography text={chooseTooltipTitle()} />
+				</div>
+				<Paper elevation={4} className="w-full truncate p-2 text-center">
+					<TooltipTypography text={chooseValueToDisplay()} color="text.secondary" />
 				</Paper>
 			</Paper>
 			<TextField
