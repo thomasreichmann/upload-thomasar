@@ -34,7 +34,7 @@ export default function FileList(props: FilesProps) {
 
 	return (
 		<>
-			<List disablePadding className="flex max-w-screen-sm flex-col gap-3">
+			<List disablePadding className="flex max-w-[80vw] flex-col gap-3">
 				{generate(
 					<Paper elevation={4}>
 						<FileListItem
