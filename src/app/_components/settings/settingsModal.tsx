@@ -92,7 +92,7 @@ export default function SettingsModal(props: SettingsModalProps) {
 				onSubmit={(event) => {
 					handleSubmit(event);
 				}}
-				className="flex w-max max-w-full flex-wrap content-around justify-around gap-4"
+				className="flex flex-wrap content-around justify-around gap-4"
 			>
 				<button className="hidden" type="submit" />
 				<ChangeFieldInput
