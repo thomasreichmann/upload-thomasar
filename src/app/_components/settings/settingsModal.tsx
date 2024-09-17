@@ -40,7 +40,7 @@ export default function SettingsModal(props: SettingsModalProps) {
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const formData = new FormData(event.currentTarget);
-		const newConfig: Record<string, string> = {};
+		const newConfig: Record<string, string | number | boolean> = {};
 		let sessionId = "";
 
 		for (const [key, value] of formData.entries()) {
@@ -51,9 +51,9 @@ export default function SettingsModal(props: SettingsModalProps) {
 			}
 
 			if (value === "true" || value === "false") {
-				(newConfig[key] as unknown as boolean) = value === "true";
+				newConfig[key] = value === "true";
 			} else if (!isNaN(Number(value))) {
-				(newConfig[key] as unknown as number) = Number(value);
+				newConfig[key] = Number(value);
 			} else {
 				newConfig[key] = value as string;
 			}
