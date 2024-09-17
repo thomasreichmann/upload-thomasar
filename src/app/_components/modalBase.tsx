@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Backdrop, Fade, LinearProgress, Modal, Paper, Slide } from "@mui/material";
+import { Backdrop, Fade, LinearProgress, Modal, Paper } from "@mui/material";
 
 export default function ModalBase(props: {
 	open: boolean;
@@ -29,12 +29,11 @@ export default function ModalBase(props: {
 					component="div"
 					ref={containerRef}
 				>
+					<Fade className="absolute left-0 top-0 w-full" in={props.loading}>
+						<LinearProgress />
+					</Fade>
+
 					{props.children}
-					{props.loading && (
-						<Slide in={props.loading} direction="up" container={containerRef.current}>
-							<LinearProgress />
-						</Slide>
-					)}
 				</Paper>
 			</Fade>
 		</Modal>
