@@ -25,7 +25,7 @@ export default function ModalBase(props: {
 		>
 			<Fade in={props.open}>
 				<Paper
-					className="absolute left-1/2 top-1/2 max-h-[80vh] w-max max-w-[80vw] -translate-x-1/2 -translate-y-1/2 transform overflow-y-auto p-3 focus-visible:outline-0"
+					className="absolute left-1/2 top-1/2 max-h-[80vh] w-max max-w-[80vw] -translate-x-1/2 -translate-y-1/2 transform overflow-y-auto p-3 focus-visible:outline-none"
 					component="div"
 					ref={containerRef}
 				>
