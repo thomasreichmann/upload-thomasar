@@ -87,37 +87,32 @@ export default function SettingsModal(props: SettingsModalProps) {
 
 	return (
 		<ModalBase open={props.open} onClose={props.onClose} loading={isLoading}>
-			<div>
-				{/*<Typography id="modal-modal-description" className="mt-2">*/}
-				{/*	Duis mollis, est non commodo luctus, nisi erat porttitor ligula.*/}
-				{/*</Typography>*/}
-				<form
-					ref={formRef}
-					onSubmit={(event) => {
-						handleSubmit(event);
-					}}
-					className="flex w-full flex-wrap gap-2"
-				>
-					<button className="hidden" type="submit" />
+			<form
+				ref={formRef}
+				onSubmit={(event) => {
+					handleSubmit(event);
+				}}
+				className="flex w-max max-w-full flex-wrap content-around justify-around gap-4"
+			>
+				<button className="hidden" type="submit" />
+				<ChangeFieldInput
+					name="sessionId"
+					displayName="Session ID"
+					loading={isLoading}
+					currentValue={props.user.sessionId}
+					type="number"
+					maxLength={6}
+					ref={sessionIdInputRef}
+				/>
+				{Object.entries(props.user.settings ?? {}).map(([key, value]) => (
 					<ChangeFieldInput
-						name="sessionId"
-						displayName="Session ID"
+						key={key}
+						currentValue={value}
+						name={key}
 						loading={isLoading}
-						currentValue={props.user.sessionId}
-						type="number"
-						maxLength={6}
-						ref={sessionIdInputRef}
 					/>
-					{Object.entries(props.user.settings ?? {}).map(([key, value]) => (
-						<ChangeFieldInput
-							key={key}
-							currentValue={value}
-							name={key}
-							loading={isLoading}
-						/>
-					))}
-				</form>
-			</div>
+				))}
+			</form>
 		</ModalBase>
 	);
 }
