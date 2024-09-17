@@ -34,7 +34,7 @@ const ChangeFieldInput = forwardRef<HTMLInputElement, ChangeFieldInputProps>((pr
 				defaultValue={props.currentValue}
 				type={props.type ?? typeof props.currentValue}
 				disabled={props.loading}
-				slotProps={{ htmlInput: { maxLength: props.maxLength } }}
+				slotProps={{ htmlInput: { maxLength: props.maxLength, enterKeyHint: "done" } }}
 				inputRef={ref}
 			/>
 		</Paper>
