@@ -14,6 +14,7 @@ import { theme } from "~/app/_components/theme";
 import Settings from "~/app/_components/settings";
 import { HydrateClient } from "~/trpc/server";
 import React from "react";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 
 export const metadata: Metadata = {
 	title: "Upload Thomasar",
@@ -25,15 +26,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 	return (
 		<html lang="en" className={`${GeistSans.variable}`}>
 			<body>
-				<ThemeProvider theme={theme}>
-					<CssBaseline />
-					<TRPCReactProvider>
-						<HydrateClient>
-							<Settings />
-							{children}
-						</HydrateClient>
-					</TRPCReactProvider>
-				</ThemeProvider>
+				<AppRouterCacheProvider options={{ enableCssLayer: true }}>
+					<ThemeProvider theme={theme}>
+						<CssBaseline />
+						<TRPCReactProvider>
+							<HydrateClient>
+								<Settings />
+								{children}
+							</HydrateClient>
+						</TRPCReactProvider>
+					</ThemeProvider>
+				</AppRouterCacheProvider>
 			</body>
 		</html>
 	);
