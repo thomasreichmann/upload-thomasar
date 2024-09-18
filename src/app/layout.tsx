@@ -26,7 +26,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 	return (
 		<html lang="en" className={`${GeistSans.variable}`}>
 			<body>
-				<AppRouterCacheProvider options={{ enableCssLayer: true }}>
+				<AppRouterCacheProvider>
 					<ThemeProvider theme={theme}>
 						<CssBaseline />
 						<TRPCReactProvider>
