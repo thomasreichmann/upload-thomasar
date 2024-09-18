@@ -93,6 +93,7 @@ export default function SettingsModal(props: SettingsModalProps) {
 					handleSubmit(event);
 				}}
 				className="flex flex-wrap content-around justify-around gap-4"
+				autoComplete="off"
 			>
 				<button className="hidden" type="submit" />
 				<ChangeFieldInput
