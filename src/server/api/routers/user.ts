@@ -1,6 +1,11 @@
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { eq } from "drizzle-orm";
-import { getDefaultUserSettings, users, type UserSettings } from "~/server/db/schema";
+import {
+	getDefaultUserSettings,
+	type UserInsert,
+	users,
+	type UserSettings,
+} from "~/server/db/schema";
 import { createInsertSchema } from "drizzle-zod";
 import { cookies } from "next/headers";
 
@@ -40,22 +45,18 @@ export const userRouter = createTRPCRouter({
 
 		// Merge the default settings with the user settings
 		const defaultSettings = getDefaultUserSettings();
-		const userSettings = user.settings;
+		const userSettings = user.settings as UserSettings;
 
-		// Filter user settings to only include keys that exist in the default settings
-		user.settings = Object.keys(defaultSettings).reduce((acc, key) => {
+		const filteredSettings = {} as UserSettings | Record<string, unknown>;
+
+		for (const key in defaultSettings) {
 			const typedKey = key as keyof UserSettings;
-
 			if (typedKey in userSettings) {
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-expect-error
-				acc[typedKey] = userSettings[typedKey];
+				filteredSettings[typedKey] = userSettings[typedKey];
 			}
+		}
 
-			return acc;
-		}, {} as UserSettings);
-
-		user.settings = { ...defaultSettings, ...user.settings };
+		user.settings = { ...defaultSettings, ...filteredSettings };
 
 		return user;
 	}),
@@ -72,7 +73,7 @@ export const userRouter = createTRPCRouter({
 			// If the sessionId is not being changed, update the user with the new settings
 			const updatedUsers = await ctx.db
 				.update(users)
-				.set(input as never)
+				.set(input as UserInsert)
 				.where(eq(users.sessionId, ssid))
 				.returning();
 

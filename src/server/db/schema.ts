@@ -1,7 +1,7 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { type InferSelectModel, sql } from "drizzle-orm";
+import { InferInsertModel, type InferSelectModel, sql } from "drizzle-orm";
 import { index, json, pgTableCreator, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 /**
@@ -44,13 +44,8 @@ export function getDefaultUserSettings() {
 		autoOpen: false,
 		delay: 1000,
 		autoOpenInfo: false,
-		test: 1,
-		test2: 2,
-		test3: 4,
-		test4: 3,
-		test5: 5,
-		test6: 6,
 	};
 }
 
 export type User = InferSelectModel<typeof users>;
+export type UserInsert = InferInsertModel<typeof users>;
