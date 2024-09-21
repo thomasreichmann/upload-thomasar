@@ -1,8 +1,9 @@
 import { z } from "zod";
+import { StorageClass } from "@aws-sdk/client-s3";
 
 export const createMultiPartUploadSchema = z.object({
 	filename: z.string().min(1),
-	storageClass: z.string().optional(),
+	storageClass: z.nativeEnum(StorageClass),
 });
 
 export const abortMultipartUploadSchema = z.object({
@@ -26,8 +27,8 @@ export const completeMultipartUploadSchema = z.object({
 	uploadId: z.string().min(1),
 	parts: z.array(
 		z.object({
-			PartNumber: z.number().int().positive(),
-			ETag: z.string().min(1),
+			PartNumber: z.number().int().positive().optional(),
+			ETag: z.string().min(1).optional(),
 		}),
 	),
 });
