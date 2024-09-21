@@ -1,20 +1,21 @@
 import "~/styles/globals.css";
-
-import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
 
-import "@fontsource/roboto/300.css";
-import "@fontsource/roboto/400.css";
-import "@fontsource/roboto/500.css";
-import "@fontsource/roboto/700.css";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { theme } from "~/app/_components/theme";
 import Settings from "~/app/_components/settings";
 import { HydrateClient } from "~/trpc/server";
 import React from "react";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
+
+import { Roboto } from "next/font/google";
+
+const roboto = Roboto({
+	weight: ["300", "400", "500", "700"],
+	subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
 	title: "Upload Thomasar",
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 	return (
-		<html lang="en" className={`${GeistSans.variable}`}>
+		<html lang="en" className={roboto.className}>
 			<body>
 				over here
 				<AppRouterCacheProvider>
