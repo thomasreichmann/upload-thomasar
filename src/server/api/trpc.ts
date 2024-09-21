@@ -96,9 +96,16 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
 });
 
 const testingMiddleware = t.middleware(async ({ next }) => {
-	const result = await next();
-	console.log("Testing middleware");
-	return result;
+	console.log("Before running");
+	try {
+		const result = await next();
+		console.log("After running");
+
+		return result;
+	} catch (err) {
+		console.error("Error running", err);
+		throw err;
+	}
 });
 
 /**
