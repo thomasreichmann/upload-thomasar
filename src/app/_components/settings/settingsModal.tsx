@@ -66,7 +66,7 @@ export default function SettingsModal(props: SettingsModalProps) {
 		 */
 		if (sessionId !== props.user.sessionId) {
 			setLoadingSessionId(true);
-			setCookie("sessionId", sessionId);
+			setCookie("sessionId", sessionId, { sameSite: "lax" });
 			void utils.user.invalidate().finally(() => {
 				setLoadingSessionId(false);
 			});
