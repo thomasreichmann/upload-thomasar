@@ -6,7 +6,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { theme } from "~/app/_components/theme";
 import Settings from "~/app/_components/settings";
-import React from "react";
+import React, { Suspense } from "react";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 
 import { Roboto } from "next/font/google";
@@ -31,7 +31,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 					<AppRouterCacheProvider>
 						<ThemeProvider theme={theme}>
 							<CssBaseline />
-							<Settings />
+							<Suspense fallback="loading">
+								<Settings />
+							</Suspense>
 							{children}
 						</ThemeProvider>
 					</AppRouterCacheProvider>

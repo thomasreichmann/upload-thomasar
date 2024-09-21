@@ -1,5 +1,5 @@
 import { Paper } from "@mui/material";
-import React from "react";
+import React, { Suspense } from "react";
 import Files from "~/app/_components/files";
 import UploadButton from "~/app/_components/upload/uploadButton";
 
@@ -11,7 +11,9 @@ export default async function Home() {
 			</h1>
 			<UploadButton />
 			<Paper className="p-3">
-				<Files />
+				<Suspense fallback="loading">
+					<Files />
+				</Suspense>
 			</Paper>
 		</main>
 	);
