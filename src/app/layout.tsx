@@ -28,17 +28,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 		<html lang="en" className={roboto.className}>
 			<body>
 				over here
-				<AppRouterCacheProvider>
-					<ThemeProvider theme={theme}>
-						<CssBaseline />
-						<TRPCReactProvider>
-							<HydrateClient>
+				<TRPCReactProvider>
+					<HydrateClient>
+						<AppRouterCacheProvider>
+							<ThemeProvider theme={theme}>
+								<CssBaseline />
 								<Settings />
 								{children}
-							</HydrateClient>
-						</TRPCReactProvider>
-					</ThemeProvider>
-				</AppRouterCacheProvider>
+							</ThemeProvider>
+						</AppRouterCacheProvider>
+					</HydrateClient>
+				</TRPCReactProvider>
 			</body>
 		</html>
 	);
