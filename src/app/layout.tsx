@@ -6,7 +6,6 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { theme } from "~/app/_components/theme";
 import Settings from "~/app/_components/settings";
-import { HydrateClient } from "~/trpc/server";
 import React from "react";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 
@@ -29,15 +28,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 			<body>
 				over here
 				<TRPCReactProvider>
-					<HydrateClient>
-						<AppRouterCacheProvider>
-							<ThemeProvider theme={theme}>
-								<CssBaseline />
-								<Settings />
-								{children}
-							</ThemeProvider>
-						</AppRouterCacheProvider>
-					</HydrateClient>
+					<AppRouterCacheProvider>
+						<ThemeProvider theme={theme}>
+							<CssBaseline />
+							<Settings />
+							{children}
+						</ThemeProvider>
+					</AppRouterCacheProvider>
 				</TRPCReactProvider>
 			</body>
 		</html>
