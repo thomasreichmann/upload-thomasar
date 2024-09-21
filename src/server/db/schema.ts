@@ -2,7 +2,7 @@
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
 import { InferInsertModel, type InferSelectModel, sql } from "drizzle-orm";
-import { index, json, pgTableCreator, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { index, jsonb, pgTableCreator, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -22,7 +22,7 @@ export const users = createTable(
 			.default(sql`CURRENT_TIMESTAMP`)
 			.notNull(),
 		updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
-		settings: json("settings")
+		settings: jsonb("settings")
 			.$type<Partial<UserSettings>>()
 			.default(getDefaultUserSettings())
 			.notNull(),
