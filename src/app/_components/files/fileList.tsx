@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { List, type ListItem, Paper } from "@mui/material";
 import FileListItem from "~/app/_components/files/fileListItem";
 import FileInfoModal from "~/app/_components/files/fileInfoModal";
+import { api } from "~/trpc/react";
 
 interface FilesProps {}
 
@@ -17,19 +18,19 @@ function generate(element: React.ReactElement<typeof ListItem>) {
 
 export default function FileList(props: FilesProps) {
 	const [open, setOpen] = useState(false);
-	// const [user] = api.user.get.useSuspenseQuery();
+	const [user] = api.user.get.useSuspenseQuery();
 
 	function handleInfoClick() {
 		setOpen(true);
 	}
 
-	// useEffect(() => {
-	// 	if (user.settings.autoOpenInfo) {
-	// 		setTimeout(() => {
-	// 			setOpen(true);
-	// 		}, user.settings.delay);
-	// 	}
-	// }, [user.settings.autoOpenInfo, user.settings.delay]);
+	useEffect(() => {
+		if (user.settings.autoOpenInfo) {
+			setTimeout(() => {
+				setOpen(true);
+			}, user.settings.delay);
+		}
+	}, [user.settings.autoOpenInfo, user.settings.delay]);
 
 	return (
 		<>
