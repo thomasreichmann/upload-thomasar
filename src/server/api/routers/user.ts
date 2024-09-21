@@ -58,8 +58,6 @@ export const userRouter = createTRPCRouter({
 
 		user.settings = { ...defaultSettings, ...filteredSettings };
 
-		console.log("returning the user");
-
 		return user;
 	}),
 
