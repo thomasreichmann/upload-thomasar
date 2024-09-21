@@ -6,20 +6,22 @@ const FileListDisplay = (props: { files?: FileList }) => {
 	}
 
 	const fileArray = Array.from(props.files).map((file, index) => (
-		<li key={index}>
-			<p>
-				<strong>File Name:</strong> {file.name}
-			</p>
-			<p>
-				<strong>Size:</strong> {file.size} bytes
-			</p>
-			<p>
-				<strong>Type:</strong> {file.type}
-			</p>
+		<li className="list-item" key={index}>
+			<div>
+				<p>
+					<strong>File Name:</strong> {file.name}
+				</p>
+				<p>
+					<strong>Size:</strong> {file.size} bytes
+				</p>
+				<p>
+					<strong>Type:</strong> {file.type}
+				</p>
+			</div>
 		</li>
 	));
 
-	return <ul>{fileArray}</ul>;
+	return <ul className="max-h-20 list-inside list-disc overflow-y-auto">{fileArray}</ul>;
 };
 
 export default FileListDisplay;

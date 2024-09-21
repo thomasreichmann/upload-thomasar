@@ -30,6 +30,7 @@ const UploadButton = () => {
 
 	return (
 		<div>
+			{upload.state.totalProgress}
 			<FileListDisplay files={files} />
 			<Button
 				component="label"
@@ -46,6 +47,11 @@ const UploadButton = () => {
 					multiple
 				/>
 			</Button>
+			{(files?.length ?? 0) > 0 && (
+				<Button variant="contained" onClick={() => upload.uppy.upload()}>
+					Trigger upload
+				</Button>
+			)}
 		</div>
 	);
 };
