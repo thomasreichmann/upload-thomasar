@@ -1,7 +1,7 @@
+"use client";
 import { Uppy } from "@uppy/core";
 import AwsS3Multipart from "@uppy/aws-s3";
 import { api } from "~/trpc/react";
-import { useUppyState } from "@uppy/react";
 import { useState } from "react";
 
 export default function useUpload() {
@@ -23,10 +23,7 @@ export default function useUpload() {
 		}),
 	);
 
-	const state = useUppyState(uppy, (state) => state);
-
 	return {
-		state,
 		uppy,
 	};
 }

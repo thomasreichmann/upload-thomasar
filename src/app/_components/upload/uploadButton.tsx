@@ -30,7 +30,7 @@ const UploadButton = () => {
 
 	return (
 		<div>
-			{upload.state.totalProgress}
+			{/*{upload.state.totalProgress}*/}
 			<FileListDisplay files={files} />
 			<Button
 				component="label"
