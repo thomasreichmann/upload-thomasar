@@ -14,7 +14,7 @@ export default function SettingsButton() {
 
 	if (!user) throw new Error("User not found");
 
-	setCookie("sessionId", user.sessionId);
+	setCookie("sessionId", user.sessionId, { sameSite: true });
 
 	useEffect(() => {
 		if (user.settings.autoOpen) {

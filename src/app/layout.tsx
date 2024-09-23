@@ -26,7 +26,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 	return (
 		<html lang="en" className={roboto.className}>
 			<body>
-				over here
 				<TRPCReactProvider>
 					<AppRouterCacheProvider>
 						<ThemeProvider theme={theme}>

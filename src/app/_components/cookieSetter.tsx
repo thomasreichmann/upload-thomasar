@@ -8,7 +8,7 @@ interface CookieSetterProps {
 }
 
 export default function CookieSetter(props: CookieSetterProps) {
-	setCookie(props.name, props.value);
+	setCookie(props.name, props.value, { sameSite: true });
 
 	return <></>;
 }
