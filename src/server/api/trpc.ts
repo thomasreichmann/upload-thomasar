@@ -95,19 +95,6 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
 	return result;
 });
 
-const testingMiddleware = t.middleware(async ({ next }) => {
-	console.log("Before running");
-	try {
-		const result = await next();
-		console.log("After running");
-
-		return result;
-	} catch (err) {
-		console.error("Error running", err);
-		throw err;
-	}
-});
-
 /**
  * Public (unauthenticated) procedure
  *
@@ -115,4 +102,4 @@ const testingMiddleware = t.middleware(async ({ next }) => {
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const publicProcedure = t.procedure.use(testingMiddleware);
+export const publicProcedure = t.procedure.use(timingMiddleware);

@@ -79,4 +79,9 @@ export const userRouter = createTRPCRouter({
 
 			return updatedUsers[0];
 		}),
+
+	delay: publicProcedure.query(async ({ ctx }) => {
+		await new Promise((resolve) => setTimeout(resolve, 2000));
+		return false;
+	}),
 });

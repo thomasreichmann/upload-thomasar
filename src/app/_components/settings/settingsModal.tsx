@@ -1,3 +1,4 @@
+"use client";
 import React, { type FormEvent, useEffect, useRef, useState } from "react";
 import { type User } from "~/server/db/schema";
 import ChangeFieldInput from "~/app/_components/changeFieldInput";

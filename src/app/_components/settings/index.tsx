@@ -9,12 +9,10 @@ async function Settings() {
 	void api.user.get.prefetch();
 
 	return (
-		<>
-			<HydrateClient>
-				<SettingsButton />
-				<CookieSetter name="sessionId" value={user.sessionId} />
-			</HydrateClient>
-		</>
+		<HydrateClient>
+			<SettingsButton />
+			<CookieSetter name="sessionId" value={user.sessionId} />
+		</HydrateClient>
 	);
 }
 
