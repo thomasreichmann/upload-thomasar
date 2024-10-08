@@ -6,6 +6,7 @@ import { api, HydrateClient } from "~/trpc/server";
 
 export default async function Home() {
 	await api.user.get.prefetch();
+	await api.file.get.prefetch();
 
 	return (
 		<HydrateClient>
@@ -13,11 +14,9 @@ export default async function Home() {
 				{/*{res ? <p>True!</p> : <p>False!</p>}*/}
 				<UploadButton />
 				<Paper className="p-3">
-					<HydrateClient>
-						<Suspense>
-							<FileList />
-						</Suspense>
-					</HydrateClient>
+					<Suspense>
+						<FileList />
+					</Suspense>
 				</Paper>
 			</main>
 		</HydrateClient>
