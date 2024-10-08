@@ -1,5 +1,5 @@
-import { z } from "zod";
 import { StorageClass } from "@aws-sdk/client-s3";
+import { z } from "zod";
 
 export const createMultiPartUploadSchema = z.object({
 	filename: z.string().min(1),
@@ -25,6 +25,8 @@ export const signPartSchema = z.object({
 export const completeMultipartUploadSchema = z.object({
 	filename: z.string().min(1),
 	uploadId: z.string().min(1),
+	type: z.string().min(1),
+	size: z.number().int().positive(),
 	parts: z.array(
 		z.object({
 			PartNumber: z.number().int().positive().optional(),

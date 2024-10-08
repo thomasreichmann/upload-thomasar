@@ -1,11 +1,10 @@
-import { Box, Button, Paper } from "@mui/material";
-import React, { Suspense } from "react";
-import UploadButton from "~/app/_components/upload/uploadButton";
+import { Paper } from "@mui/material";
+import { Suspense } from "react";
 import FileList from "~/app/_components/files/fileList";
+import UploadButton from "~/app/_components/upload/uploadButton";
 import { api, HydrateClient } from "~/trpc/server";
 
 export default async function Home() {
-	await api.user.delay.prefetch();
 	await api.user.get.prefetch();
 
 	return (

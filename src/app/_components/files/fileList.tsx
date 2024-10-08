@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import { List, type ListItem, Paper } from "@mui/material";
-import FileListItem from "~/app/_components/files/fileListItem";
+import React, { useEffect, useState } from "react";
 import FileInfoModal from "~/app/_components/files/fileInfoModal";
+import FileListItem from "~/app/_components/files/fileListItem";
 import { api } from "~/trpc/react";
 
 interface FilesProps {}
@@ -19,7 +19,6 @@ function generate(element: React.ReactElement<typeof ListItem>) {
 export default function FileList(props: FilesProps) {
 	const [open, setOpen] = useState(false);
 	const [user] = api.user.get.useSuspenseQuery();
-	const [res] = api.user.delay.useSuspenseQuery();
 
 	function handleInfoClick() {
 		setOpen(true);
@@ -35,8 +34,6 @@ export default function FileList(props: FilesProps) {
 
 	return (
 		<>
-			{res ? <p>True!</p> : <p>False!</p>}
-			<p>Testing writing new stuff and adding a p element after</p>
 			<List disablePadding className="flex max-w-[80vw] flex-col gap-3">
 				{generate(
 					<Paper elevation={4}>

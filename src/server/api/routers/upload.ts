@@ -5,6 +5,10 @@ import {
 	ListPartsCommand,
 	UploadPartCommand,
 } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { eq } from "drizzle-orm";
+import { cookies } from "next/headers";
+import { env } from "~/env";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import {
 	abortMultipartUploadSchema,
@@ -13,9 +17,8 @@ import {
 	listPartsSchema,
 	signPartSchema,
 } from "~/server/api/types";
-import { env } from "~/env";
+import { files, users } from "~/server/db/schema";
 import s3Client from "~/server/lib/s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export const uploadRouter = createTRPCRouter({
 	createMultiPartUpload: publicProcedure
@@ -64,6 +67,27 @@ export const uploadRouter = createTRPCRouter({
 			});
 
 			const response = await s3Client.send(completeMultipartUploadCommand);
+
+			// if the file was uploaded successfully, add it to the database
+			if (response.Location && response.Key) {
+				const ssid = cookies().get("sessionId")?.value;
+				const user = await ctx.db.query.users.findFirst({
+					where: eq(users.sessionId, ssid ?? ""),
+				});
+
+				await ctx.db
+					.insert(files)
+					.values({
+						fileName: input.filename,
+						key: response.Key,
+						location: response.Location,
+						uploadId: input.uploadId,
+						size: input.size,
+						type: input.type,
+						userId: user?.id,
+					})
+					.returning();
+			}
 
 			return { key: response.Key, location: response.Location };
 		}),

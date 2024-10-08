@@ -1,18 +1,16 @@
 "use client";
-import { Uppy } from "@uppy/core";
 import AwsS3Multipart from "@uppy/aws-s3";
-import { api } from "~/trpc/react";
+import { Uppy } from "@uppy/core";
 import { useState } from "react";
+import { api } from "~/trpc/react";
 
 export default function useUpload() {
-	// Call hooks at the top level of the hook
 	const createMutation = api.upload.createMultiPartUpload.useMutation();
 	const abortMutation = api.upload.abortMultipartUpload.useMutation();
 	const listPartMutation = api.upload.listParts.useMutation();
 	const completeMutation = api.upload.completeMultipartUpload.useMutation();
 	const signPartMutation = api.upload.signPart.useMutation();
 
-	// Now pass those mutation hooks as parameters to createUppyClient
 	const [uppy] = useState(() =>
 		createUppyClient({
 			createMutation,
@@ -54,13 +52,15 @@ function createUppyClient({
 				filename: file.name ?? "",
 				uploadId: opts.uploadId,
 				parts: opts.parts,
+				type: file.type,
+				size: file.size ?? 0,
 			});
 
 			return {
 				location: response.location,
 			};
 		},
-		getChunkSize: (file) => 1024 ** 2,
+		getChunkSize: () => 1024 ** 2,
 		createMultipartUpload: async (file) => {
 			const response = await createMutation.mutateAsync({
 				filename: file.name ?? "",

@@ -1,8 +1,8 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { InferInsertModel, type InferSelectModel, sql } from "drizzle-orm";
-import { index, jsonb, pgTableCreator, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { type InferInsertModel, type InferSelectModel, sql } from "drizzle-orm";
+import { index, integer, jsonb, pgTableCreator, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -31,6 +31,21 @@ export const users = createTable(
 		sessionIdIndex: index("sessionId_idx").on(example.sessionId),
 	}),
 );
+
+export const files = createTable("file", {
+	id: uuid("id").defaultRandom().primaryKey(),
+	fileName: varchar("name", { length: 256 }).notNull(),
+	key: varchar("key", { length: 256 }).notNull(),
+	location: varchar("location", { length: 256 }).notNull(),
+	uploadId: varchar("upload_id", { length: 256 }).notNull(),
+	size: integer("size").notNull(),
+	type: varchar("type", { length: 256 }).notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true })
+		.default(sql`CURRENT_TIMESTAMP`)
+		.notNull(),
+	updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
+	userId: uuid("user_id").references(() => users.id),
+});
 
 export type UserSettings = ReturnType<typeof getDefaultUserSettings>;
 
