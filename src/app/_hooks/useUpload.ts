@@ -5,10 +5,14 @@ import { useState } from "react";
 import { api } from "~/trpc/react";
 
 export default function useUpload() {
+	const utils = api.useUtils();
+
 	const createMutation = api.upload.createMultiPartUpload.useMutation();
 	const abortMutation = api.upload.abortMultipartUpload.useMutation();
 	const listPartMutation = api.upload.listParts.useMutation();
-	const completeMutation = api.upload.completeMultipartUpload.useMutation();
+	const completeMutation = api.upload.completeMultipartUpload.useMutation({
+		onSettled: () => utils.file.invalidate(),
+	});
 	const signPartMutation = api.upload.signPart.useMutation();
 
 	const [uppy] = useState(() =>
