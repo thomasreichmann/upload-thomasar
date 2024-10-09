@@ -2,33 +2,33 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"type": "node",
+			"name": "Next.js: debug server-side",
+			"type": "node-terminal",
 			"request": "launch",
-			"name": "Debug Next.js Server",
-			"program": "${workspaceFolder}/node_modules/next/dist/bin/next",
-			"args": ["dev"],
-			"console": "integratedTerminal",
-			"internalConsoleOptions": "neverOpen",
-			"runtimeExecutable": "node",
-			"skipFiles": ["<node_internals>/**"],
-			"restart": true,
-			"env": {
-				"NODE_OPTIONS": "--inspect"
-			}
+			"command": "pnpm run dev"
 		},
 		{
+			"name": "Next.js: debug client-side",
 			"type": "chrome",
-			"name": "Debug Next.js Frontend",
 			"request": "launch",
-			"url": "http://localhost:3000",
-			"webRoot": "${workspaceFolder}",
-			"skipFiles": ["node_modules/**/*.js", "<node_internals>/**"]
-		}
-	],
-	"compounds": [
+			"url": "http://localhost:3000"
+		},
 		{
-			"name": "Debug Next.js Full-stack",
-			"configurations": ["Debug Next.js Server", "Debug Next.js Frontend"]
+			"name": "Next.js: debug full stack",
+			"type": "node-terminal",
+			"request": "launch",
+			"command": "pnpm run dev",
+			"outFiles": [
+				"${workspaceFolder}/**/*.(m|c|)(js|ts)",
+				"!**/node_modules/**",
+				"!**/.next/**"
+			],
+			"skipFiles": ["<node_internals>/**", "**/node_modules/**"],
+			"serverReadyAction": {
+				"pattern": "- Local:.+(https?://.+)",
+				"uriFormat": "%s",
+				"action": "debugWithChrome"
+			}
 		}
 	]
 }
