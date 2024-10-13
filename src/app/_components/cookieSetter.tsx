@@ -14,7 +14,7 @@ export function UserCookieSetter() {
 }
 
 export default function CookieSetter(props: CookieSetterProps) {
-	setCookie(props.name, props.value, { sameSite: true });
+	setCookie(props.name, props.value, { sameSite: true, path: "/" });
 
 	return <></>;
 }

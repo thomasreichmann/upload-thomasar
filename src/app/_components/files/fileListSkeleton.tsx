@@ -6,7 +6,6 @@ export default function FileListSkeleton() {
 		<Paper elevation={4} className="px-2">
 			<List disablePadding className="max-w-[80vw]">
 				<ListItem disablePadding disableGutters>
-					FALLBACK
 					<Skeleton height={48} width={600} />
 				</ListItem>
 			</List>

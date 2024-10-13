@@ -10,7 +10,7 @@ export default function Files({ user }: { user: User }) {
 	return (
 		<TransitionGroup>
 			<Suspense fallback={<FileListSkeleton />}>
-				<Collapse key={1} in={true}>
+				<Collapse key={0} in={true}>
 					<FileList user={user} />
 				</Collapse>
 			</Suspense>

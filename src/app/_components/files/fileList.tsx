@@ -57,7 +57,6 @@ export default function FileList(props: FilesProps) {
 
 	return (
 		<div>
-			REAL
 			<List disablePadding className="flex max-w-[80vw] flex-col gap-3">
 				{displayFiles()}
 			</List>
