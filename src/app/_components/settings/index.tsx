@@ -1,15 +1,20 @@
+import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { UserCookieSetter } from "~/app/_components/cookieSetter";
 import SettingsButton from "~/app/_components/settings/settingsButton";
 import { api, HydrateClient } from "~/trpc/server";
 
 async function Settings() {
 	void api.user.get.prefetch();
-	const user = await api.user.get();
 
 	return (
 		<HydrateClient>
-			<SettingsButton />
-			<UserCookieSetter />
+			<ErrorBoundary fallback={<p>Error</p>}>
+				<Suspense>
+					<SettingsButton />
+					<UserCookieSetter />
+				</Suspense>
+			</ErrorBoundary>
 		</HydrateClient>
 	);
 }

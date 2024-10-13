@@ -2,6 +2,7 @@ import { uploadRouter } from "~/server/api/routers/upload";
 import { userRouter } from "~/server/api/routers/user";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { fileRouter } from "./routers/files";
+import { sanityRouter } from "./routers/sanity";
 
 /**
  * This is the primary router for your server.
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
 	user: userRouter,
 	upload: uploadRouter,
 	file: fileRouter,
+	sanity: sanityRouter,
 });
 
 // export type definition of API
