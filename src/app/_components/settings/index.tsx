@@ -4,6 +4,7 @@ import { api, HydrateClient } from "~/trpc/server";
 
 async function Settings() {
 	void api.user.get.prefetch();
+	const user = await api.user.get();
 
 	return (
 		<HydrateClient>
