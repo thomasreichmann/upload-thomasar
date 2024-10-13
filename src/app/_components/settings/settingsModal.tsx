@@ -1,10 +1,10 @@
 "use client";
-import React, { type FormEvent, useEffect, useRef, useState } from "react";
-import { type User } from "~/server/db/schema";
-import ChangeFieldInput from "~/app/_components/changeFieldInput";
-import { api } from "~/trpc/react";
 import { setCookie } from "cookies-next";
+import { type FormEvent, useEffect, useRef, useState } from "react";
+import ChangeFieldInput from "~/app/_components/changeFieldInput";
 import ModalBase from "~/app/_components/modalBase";
+import { type User } from "~/server/db/schema";
+import { api } from "~/trpc/react";
 
 interface SettingsModalProps {
 	open: boolean;
@@ -70,6 +70,7 @@ export default function SettingsModal(props: SettingsModalProps) {
 			setCookie("sessionId", sessionId, { sameSite: true });
 			void utils.user.invalidate().finally(() => {
 				setLoadingSessionId(false);
+				void utils.file.invalidate();
 			});
 		} else {
 			updateUser.mutate({

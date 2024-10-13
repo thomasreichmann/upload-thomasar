@@ -15,9 +15,10 @@
 		},
 		{
 			"name": "Next.js: debug full stack",
-			"type": "node-terminal",
+			"type": "node",
 			"request": "launch",
-			"command": "pnpm run dev",
+			"runtimeExecutable": "pnpm",
+			"args": ["run", "dev"],
 			"outFiles": [
 				"${workspaceFolder}/**/*.(m|c|)(js|ts)",
 				"!**/node_modules/**",
@@ -27,7 +28,7 @@
 			"serverReadyAction": {
 				"pattern": "- Local:.+(https?://.+)",
 				"uriFormat": "%s",
-				"action": "debugWithChrome"
+				"action": "openExternally"
 			}
 		}
 	]
