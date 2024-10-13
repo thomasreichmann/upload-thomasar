@@ -1,13 +1,13 @@
-import "~/styles/globals.css";
 import { type Metadata } from "next";
+import "~/styles/globals.css";
 
 import { TRPCReactProvider } from "~/trpc/react";
 
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import { theme } from "~/app/_components/theme";
-import Settings from "~/app/_components/settings";
-import React from "react";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
+import React from "react";
+import Settings from "~/app/_components/settings";
+import { theme } from "~/app/_components/theme";
 
 import { Roboto } from "next/font/google";
 
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 	icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 	return (
 		<html lang="en" className={roboto.className}>
 			<body>
